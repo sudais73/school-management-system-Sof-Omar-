@@ -345,3 +345,23 @@ a {
     color: var(--foreground);
   }
 }
+@theme {
+  --color-ink: #14213D;
+  --color-ink-soft: #3A4A6B;
+
+  --color-chalk: #F5F6F0;
+  --color-chalk-card: #FFFFFF;
+
+  --color-marigold: #E3A335;
+  --color-marigold-deep: #B87F1F;
+
+  --color-evergreen: #1F5C4F;
+  --color-evergreen-deep: #164941;
+
+  --color-ulead-slate: #4B5563;
+  --color-ulead-line: #E3E1D8;
+
+  --font-serif: "Fraunces", serif;
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
