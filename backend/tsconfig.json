@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES2022",
+    "types": [
+      "node"
+    ],
     "module": "CommonJS",
     "rootDir": "./src",
     "outDir": "./dist",
@@ -8,5 +11,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }
