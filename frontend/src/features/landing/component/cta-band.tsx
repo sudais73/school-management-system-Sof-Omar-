@@ -13,7 +13,7 @@ export function CtaBand() {
         Set up your school's account and move attendance, grading, and fees online this term.
       </p>
       <Link
-        to="/signup"
+        to="/login"
         className="inline-block rounded-lg bg-evergreen px-7 py-3.5 text-[15px] font-semibold text-white transition hover:bg-evergreen-deep"
       >
         Create account

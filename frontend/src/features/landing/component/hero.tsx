@@ -33,7 +33,7 @@ export function Hero() {
 
           <div className="mb-8 flex flex-wrap gap-3.5">
             <Link
-              to="/signup"
+              to="/login"
               className="rounded-lg bg-marigold px-6 py-3.5 text-[15px] font-semibold text-ink transition hover:bg-marigold-deep hover:text-white hover:-translate-y-0.5"
             >
               Get started
