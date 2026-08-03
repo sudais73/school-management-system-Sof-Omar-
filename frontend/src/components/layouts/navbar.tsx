@@ -30,12 +30,7 @@ export function Navbar() {
           >
             Log in
           </Link>
-          <Link
-            to="/signup"
-            className="rounded-lg bg-evergreen px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-evergreen-deep"
-          >
-            Get started
-          </Link>
+        
         </div>
       </div>
     </nav>
