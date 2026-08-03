@@ -57,13 +57,6 @@ function LoginPage() {
           Log in
         </button>
       </form>
-
-      <p className="mt-6 text-center text-sm text-ulead-slate">
-        New to U-Lead?{" "}
-        <Link to="/signup" className="font-medium text-evergreen-deep hover:underline">
-          Create an account
-        </Link>
-      </p>
     </AuthLayout>
   );
 }
