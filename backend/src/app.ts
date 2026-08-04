@@ -1,15 +1,18 @@
 import express from "express";
 import cors from "cors";
-
-import { logger } from "./config/logger";
-import routes from "./routes";
-
+import morgan from "morgan";
+import { env } from "./config/env";
+import authRoutes from "./modules/auth/auth.routes";
 const app = express();
 
 app.use(cors());
-app.use(logger);
+app.use(morgan("dev"));
 app.use(express.json());
 
-app.use("/api", routes);
+app.listen(env.PORT, () => {
+  console.log(`🚀 Server running on port ${env.PORT}`);
+});
+
+app.use("/api/auth", authRoutes);
 
 export default app;
