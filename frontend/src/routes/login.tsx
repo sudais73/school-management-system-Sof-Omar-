@@ -1,20 +1,43 @@
 import { AuthLayout } from "#/components/layouts/auth-layout";
 import { AuthField } from "#/features/auth/components/auth-field";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-
+import axios from "axios";
+import { apiClient } from "@/lib/api";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
 function LoginPage() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Wired up once the auth API exists
+    setError(null);
+    setLoading(true);
+
+    apiClient
+      .post("/auth/login", { email, password })
+      .then(({ data }) => {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role);
+
+        if (data.mustChangePassword) {
+          navigate({ to: "/change-password" }); // route doesn't exist yet
+        } else {
+          navigate({ to: "/dashboard" });
+        }
+      })
+      .catch((err) => {
+        const message = axios.isAxiosError(err) ? err.response?.data?.message : null;
+        setError(message ?? "Login failed");
+      })
+      .finally(() => setLoading(false));
   }
 
   return (
@@ -50,11 +73,16 @@ function LoginPage() {
           </Link>
         </div>
 
+        {error && (
+          <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+        )}
+
         <button
           type="submit"
-          className="w-full rounded-lg bg-evergreen py-2.5 text-sm font-semibold text-white transition hover:bg-evergreen-deep"
+          disabled={loading}
+          className="w-full rounded-lg bg-evergreen py-2.5 text-sm font-semibold text-white transition hover:bg-evergreen-deep disabled:opacity-60"
         >
-          Log in
+          {loading ? "Logging in..." : "Log in"}
         </button>
       </form>
     </AuthLayout>
