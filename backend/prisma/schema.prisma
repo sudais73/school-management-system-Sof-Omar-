@@ -40,3 +40,40 @@ model User {
 
   @@map("users")
 }
+
+enum ClassStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Class {
+  id        String      @id @default(cuid())
+  className String
+  capacity  Int?
+  status    ClassStatus @default(ACTIVE)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  students Student[]
+  subjects Subject[]
+
+  @@map("classes")
+}
+
+// Minimal placeholder — fleshed out fully when we build the Students module
+model Student {
+  id        String  @id @default(cuid())
+  classId   String?
+  class     Class?  @relation(fields: [classId], references: [id])
+
+  @@map("students")
+}
+
+// Minimal placeholder — fleshed out fully when we build the Subjects module
+model Subject {
+  id      String  @id @default(cuid())
+  name    String
+  classes Class[]
+
+  @@map("subjects")
+}
