@@ -14,6 +14,7 @@ import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as DashboardClassesRouteImport } from './routes/dashboard/classes'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,18 +41,25 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardClassesRoute = DashboardClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
@@ -60,19 +68,27 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/forgot-password' | '/login' | '/dashboard/'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/forgot-password'
+    | '/login'
+    | '/dashboard/classes'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/forgot-password' | '/login' | '/dashboard'
+  to: '/' | '/forgot-password' | '/login' | '/dashboard/classes' | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/dashboard/classes'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
@@ -120,14 +136,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/classes': {
+      id: '/dashboard/classes'
+      path: '/classes'
+      fullPath: '/dashboard/classes'
+      preLoaderRoute: typeof DashboardClassesRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
   }
 }
 
 interface DashboardRouteRouteChildren {
+  DashboardClassesRoute: typeof DashboardClassesRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardClassesRoute: DashboardClassesRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
