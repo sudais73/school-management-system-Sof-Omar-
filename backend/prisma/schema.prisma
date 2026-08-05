@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,6 +5,51 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  password           String
+  fullName           String
+  role               Role
+  isVerified         Boolean   @default(false)
+  mustChangePassword Boolean   @default(true)
+  otp                String?
+  otpExpiresAt       DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@map("users")
+}
+
+model Class {
+  id        String      @id @default(cuid())
+  className String
+  capacity  Int?
+  status    ClassStatus @default(ACTIVE)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  students  Student[]
+  subjects  Subject[]   @relation("ClassToSubject")
+
+  @@map("classes")
+}
+
+model Student {
+  id      String  @id @default(cuid())
+  classId String?
+  class   Class?  @relation(fields: [classId], references: [id])
+
+  @@map("students")
+}
+
+model Subject {
+  id      String  @id @default(cuid())
+  name    String
+  classes Class[] @relation("ClassToSubject")
+
+  @@map("subjects")
 }
 
 enum Role {
@@ -20,60 +60,7 @@ enum Role {
   STUDENT
 }
 
-model User {
-  id    String @id @default(cuid())
-  email String @unique
-  password String
-
-  fullName String
-  role     Role
-
-  // Account state
-  isVerified         Boolean @default(false)
-  mustChangePassword Boolean @default(true)
-
-  otp          String?
-  otpExpiresAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("users")
-}
-
 enum ClassStatus {
   ACTIVE
   INACTIVE
-}
-
-model Class {
-  id        String      @id @default(cuid())
-  className String
-  capacity  Int?
-  status    ClassStatus @default(ACTIVE)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-
-  students Student[]
-  subjects Subject[]
-
-  @@map("classes")
-}
-
-// Minimal placeholder — fleshed out fully when we build the Students module
-model Student {
-  id        String  @id @default(cuid())
-  classId   String?
-  class     Class?  @relation(fields: [classId], references: [id])
-
-  @@map("students")
-}
-
-// Minimal placeholder — fleshed out fully when we build the Subjects module
-model Subject {
-  id      String  @id @default(cuid())
-  name    String
-  classes Class[]
-
-  @@map("subjects")
 }
