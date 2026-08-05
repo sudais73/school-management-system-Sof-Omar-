@@ -22,7 +22,6 @@ export type MenuItem = {
   href: string;
   icon: LucideIcon;
   roles: Role[]; // which roles can see this
-  plan?: "pro"; // if set, only pro-plan schools see this (badge only for now — no gating yet)
 };
 
 export const menuItems: MenuItem[] = [
@@ -52,7 +51,6 @@ export const menuItems: MenuItem[] = [
     href: "/dashboard/fees",
     icon: DollarSign,
     roles: ["SUPER_ADMIN"],
-    plan: "pro",
   },
   {
     label: "View Results",
@@ -109,7 +107,6 @@ export const menuItems: MenuItem[] = [
     href: "/dashboard/live-classes",
     icon: Video,
     roles: ["SUPER_ADMIN", "TEACHER", "PARENT", "STUDENT"],
-    plan: "pro",
   },
   {
     label: "Announcements",
