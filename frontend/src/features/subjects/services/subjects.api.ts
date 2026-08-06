@@ -1,0 +1,12 @@
+import { apiClient } from "@/lib/api";
+import type { ClassWithSubjects } from "@/types/subject";
+
+export async function fetchClassesWithSubjects() {
+  const { data } = await apiClient.get<ClassWithSubjects[]>("/api/subjects");
+  return data;
+}
+
+export async function createSubjectRequest(classId: string, name: string) {
+  const { data } = await apiClient.post("/api/subjects", { classId, name });
+  return data;
+}
