@@ -11,7 +11,7 @@ export function Sidebar({ role }: SidebarProps) {
   const visibleItems = menuItems.filter((item) => item.roles.includes(role));
 
   return (
-    <aside className="flex h-screen w-64 shrink-0 flex-col bg-ink">
+    <aside className="hidden md:flex h-screen w-64 shrink-0 flex-col bg-ink">
       <div className="flex items-center gap-2.5 border-b border-white/10 px-5 py-5">
         <span className="flex h-7 w-7 items-center justify-center rounded-md bg-white/10 font-serif text-base font-semibold text-marigold">
           U

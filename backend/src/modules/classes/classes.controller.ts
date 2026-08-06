@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { getClasses, addClass } from "./classes.service";
+import { getClasses, addClass, editClass } from "./classes.service";
 
 export async function listClasses(_req: Request, res: Response) {
   const classes = await getClasses();
@@ -15,4 +15,11 @@ export async function createClassHandler(req: Request, res: Response) {
 
   const newClass = await addClass(className, capacity);
   res.status(201).json({ class: newClass });
+}
+
+export async function updateClassHandler(req: Request, res: Response) {
+  const { className, capacity } = req.body;
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  const updated = await editClass(id, className, capacity);
+  res.status(200).json({ class: updated });
 }
