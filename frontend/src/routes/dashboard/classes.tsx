@@ -79,9 +79,7 @@ function ClassesPage() {
               >
                 Edit
               </button>
-              <button className="rounded-lg bg-marigold px-3 py-1 text-sm font-semibold text-white transition hover:bg-marigold-deep">
-                Delete
-              </button>
+      
               <button className="rounded-lg bg-blue-500 px-3 py-1 text-sm font-semibold text-white transition hover:bg-blue-600">
                 View
               </button>
