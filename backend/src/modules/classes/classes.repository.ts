@@ -13,3 +13,6 @@ export function findAllClasses() {
 export function createClass(data: { className: string; capacity?: number }) {
   return prisma.class.create({ data });
 }
+export function updateClass(id: string, data: { className: string; capacity?: number }) {
+  return prisma.class.update({ where: { id }, data });
+}

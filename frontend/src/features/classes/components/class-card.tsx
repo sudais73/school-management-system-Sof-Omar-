@@ -1,8 +1,8 @@
-import { GraduationCap, Users, BookOpen } from "lucide-react";
+import { GraduationCap, Users, BookOpen, MoreHorizontal } from "lucide-react";
 import type { SchoolClass } from "@/types/class";
 import { ClassStatusBadge } from "./class-status-badge";
 
-export function ClassCard({ classItem }: { classItem: SchoolClass }) {
+export function ClassCard({ classItem}: { classItem: SchoolClass}) {
   return (
     <div className="overflow-hidden rounded-2xl border border-ulead-line bg-chalk-card">
       <div className="flex items-center justify-between p-4">
