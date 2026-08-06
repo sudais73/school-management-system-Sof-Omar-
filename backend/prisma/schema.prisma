@@ -7,6 +7,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  TEACHER
+  PARENT
+  STUDENT
+}
+
+enum ClassStatus {
+  ACTIVE
+  INACTIVE
+}
+
 model User {
   id                 String    @id @default(cuid())
   email              String    @unique
@@ -20,7 +33,16 @@ model User {
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
+  teacher Teacher?
+
   @@map("users")
+}
+model Student {
+  id      String  @id @default(cuid())
+  classId String?
+  class   Class?  @relation(fields: [classId], references: [id])
+
+  @@map("students")
 }
 
 model Class {
@@ -30,37 +52,36 @@ model Class {
   status    ClassStatus @default(ACTIVE)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  students  Student[]
-  subjects  Subject[]   @relation("ClassToSubject")
+
+  students Student[]
+  subjects Subject[]
 
   @@map("classes")
 }
 
-model Student {
-  id      String  @id @default(cuid())
-  classId String?
-  class   Class?  @relation(fields: [classId], references: [id])
-
-  @@map("students")
-}
-
 model Subject {
-  id      String  @id @default(cuid())
-  name    String
-  classes Class[] @relation("ClassToSubject")
+  id        String  @id @default(cuid())
+  name      String
+  classId   String
+  teacherId String?
 
+  class   Class    @relation(fields: [classId], references: [id])
+  teacher Teacher? @relation(fields: [teacherId], references: [id])
+
+  @@unique([classId, name])
   @@map("subjects")
 }
 
-enum Role {
-  SUPER_ADMIN
-  ADMIN
-  TEACHER
-  PARENT
-  STUDENT
-}
+model Teacher {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id])
+  employeeId String?  @unique
+  phone      String?
 
-enum ClassStatus {
-  ACTIVE
-  INACTIVE
+  subjects  Subject[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("teachers")
 }

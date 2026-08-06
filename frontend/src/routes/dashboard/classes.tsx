@@ -7,6 +7,7 @@ import { ClassCard } from "@/features/classes/components/class-card";
 import { ClassStatusBadge } from "@/features/classes/components/class-status-badge";
 import type { SchoolClass } from "@/types/class";
 import { AddClassModal } from "#/features/classes/components/AddClassModal";
+import { ViewClassModal } from "#/features/classes/components/ViewClassModal";
 
 export const Route = createFileRoute("/dashboard/classes")({
   component: ClassesPage,
@@ -18,7 +19,7 @@ function ClassesPage() {
   const [loading, setLoading] = useState(true);
   const [editingClass, setEditingClass] = useState<SchoolClass | null>(null);
   const [openAddClassModal, setOpenAddClassModal] = useState(false);
-
+  const [openViewClassModal, setOpenViewClassModal] = useState(false);
   function loadClasses() {
     return fetchClasses()
       .then(setClasses)
@@ -47,6 +48,15 @@ function ClassesPage() {
   function handleSaved() {
     closeModal();
     loadClasses();
+  }
+  function openViewModal(classItem: SchoolClass) {
+    setEditingClass(classItem);
+    setOpenViewClassModal(true);
+  }
+
+  function closeViewModal() {
+    setOpenViewClassModal(false);
+    setEditingClass(null);
   }
 
   const filtered = classes.filter((c) => c.className.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -80,7 +90,13 @@ function ClassesPage() {
                 Edit
               </button>
       
-              <button className="rounded-lg bg-blue-500 px-3 py-1 text-sm font-semibold text-white transition hover:bg-blue-600">
+              <button
+                onClick={() => {
+                  openViewModal(classItem);
+                  setOpenActionMenu(false);
+                }}
+                className="rounded-lg bg-blue-500 px-3 py-1 text-sm font-semibold text-white transition hover:bg-blue-600"
+              >
                 View
               </button>
             </ul>
@@ -190,6 +206,10 @@ function ClassesPage() {
       {openAddClassModal && (
         <AddClassModal key={editingClass?.id ?? "new"} editClass={editingClass} onClose={closeModal} onSaved={handleSaved} />
       )}
+{openViewClassModal && editingClass && (
+  <ViewClassModal classId={editingClass.id} onClose={closeViewModal} />
+)}
+      
     </div>
   );
 }

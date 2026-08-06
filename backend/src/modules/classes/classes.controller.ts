@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { getClasses, addClass, editClass } from "./classes.service";
+import { findClassById } from "./classes.repository";
 
 export async function listClasses(_req: Request, res: Response) {
   const classes = await getClasses();
@@ -22,4 +23,13 @@ export async function updateClassHandler(req: Request, res: Response) {
   const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const updated = await editClass(id, className, capacity);
   res.status(200).json({ class: updated });
+}
+
+export async function findClassByIdHandler(req: Request, res: Response) {
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  const classData = await findClassById(id);
+  if (!classData) {
+    return res.status(404).json({ message: "Class not found" });
+  }
+  res.status(200).json({ class: classData });
 }
