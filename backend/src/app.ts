@@ -4,6 +4,7 @@ import morgan from "morgan";
 import { env } from "./config/env";
 import authRoutes from "./modules/auth/auth.routes";
 import classesRoutes from "./modules/classes/classes.routes";
+import subjectsRoutes from "./modules/subjects/subjects.routes";
 const app = express();
 
 app.use(cors());
@@ -16,5 +17,6 @@ app.listen(env.PORT, () => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/classes", classesRoutes);
+app.use("/api/subjects", subjectsRoutes);
 
 export default app;
