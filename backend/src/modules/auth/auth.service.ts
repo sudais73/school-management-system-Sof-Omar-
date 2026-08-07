@@ -1,7 +1,8 @@
 import { comparePassword, hashPassword } from "@/utils/hash.utils";
 import { findUserByEmail } from "../users/users.repository";
 import { signToken } from "@/utils/jwt.util";
-import  Prisma  from "@prisma/client";
+import prisma from "@/config/prisma";
+
 
 export type LoginResult =
   | { success: true; token: string; mustChangePassword: boolean; role: string }
@@ -39,7 +40,7 @@ export async function setupAccount(email: string, otp: string, newPassword: stri
   }
 
   const hashedPassword = await hashPassword(newPassword);
-  await Prisma.user.update({
+  await prisma.user.update({
     where: { id: user.id },
     data: { password: hashedPassword, otp: null, otpExpiresAt: null, isVerified: true, mustChangePassword: false },
   });
