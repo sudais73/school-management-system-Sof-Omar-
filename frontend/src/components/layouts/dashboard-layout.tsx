@@ -17,7 +17,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     <div className="flex h-screen bg-chalk">
       <Sidebar role={role} />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Topbar role={role} onRoleChange={setRole} />
+        <Topbar role={role} />
         <main className="flex-1 overflow-y-auto p-8">{children}</main>
       </div>
     </div>

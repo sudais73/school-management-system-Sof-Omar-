@@ -1,0 +1,24 @@
+export type StudentListItem = {
+  id: string;
+  admissionNumber: string;
+  firstName: string;
+  middleName: string | null;
+  lastName: string;
+  gender: "MALE" | "FEMALE" | null;
+  status: "ACTIVE" | "GRADUATED" | "SUSPENDED" | "INACTIVE";
+  dateOfBirth: string | null;
+  residentialAddress: string | null;
+  stateOfOrigin: string | null;
+  nationality: string | null;
+  admissionDate: string | null;
+  previousSchool: string | null;
+  guardianName: string | null;
+  guardianRelationship: string | null;
+  guardianPhone: string | null;
+  guardianOccupation: string | null;
+  guardianEmail: string | null;
+  guardianAddress: string | null;
+  createdAt: string;
+  user: { id: string; email: string };
+  class: { id: string; className: string } | null;
+};
