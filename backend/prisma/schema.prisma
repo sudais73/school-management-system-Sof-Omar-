@@ -34,15 +34,8 @@ model User {
   updatedAt          DateTime  @updatedAt
 
   teacher Teacher?
-
+  student Student?
   @@map("users")
-}
-model Student {
-  id      String  @id @default(cuid())
-  classId String?
-  class   Class?  @relation(fields: [classId], references: [id])
-
-  @@map("students")
 }
 
 model Class {
@@ -120,4 +113,48 @@ model Teacher {
   updatedAt DateTime @updatedAt
 
   @@map("teachers")
+}
+enum StudentStatus {
+  ACTIVE
+  GRADUATED
+  SUSPENDED
+  INACTIVE
+}
+
+model Student {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  admissionNumber String @unique
+
+  firstName  String
+  middleName String?
+  lastName   String
+
+  gender             Gender?
+  dateOfBirth        DateTime?
+  residentialAddress String?
+  stateOfOrigin      String?
+  nationality        String?
+
+  classId String?
+  class   Class?  @relation(fields: [classId], references: [id])
+
+  admissionDate  DateTime?
+  previousSchool String?
+  status         StudentStatus @default(ACTIVE)
+
+  // Guardian info captured inline — not a separate login-linked model yet
+  guardianName         String?
+  guardianRelationship String?
+  guardianPhone        String?
+  guardianOccupation   String?
+  guardianEmail        String?
+  guardianAddress      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("students")
 }
