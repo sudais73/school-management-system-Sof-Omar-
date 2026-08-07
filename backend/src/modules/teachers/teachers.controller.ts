@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { addTeacher } from "./teachers.service";
+import { addTeacher, getTeachers } from "./teachers.service";
 
 export async function createTeacherHandler(req: Request, res: Response) {
   const {
@@ -34,4 +34,10 @@ export async function createTeacherHandler(req: Request, res: Response) {
     }
     throw err;
   }
+}
+
+
+export async function listTeachersHandler(_req: Request, res: Response) {
+  const teachers = await getTeachers();
+  res.status(200).json({ teachers });
 }

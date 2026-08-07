@@ -10,3 +10,9 @@ export async function addTeacher(input: Omit<Parameters<typeof createTeacherWith
 
   return { user, teacher, otp };
 }
+
+import { findAllTeachers } from "./teachers.repository";
+
+export function getTeachers() {
+  return findAllTeachers();
+}

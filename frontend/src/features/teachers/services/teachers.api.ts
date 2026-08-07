@@ -2,7 +2,7 @@ import { apiClient } from "@/lib/api";
 import type { TeacherListItem } from "@/types/teacher";
 
 export async function fetchTeachers() {
-  const { data } = await apiClient.get<{ teachers: TeacherListItem[] }>("/api/teachers");
+  const { data } = await apiClient.get<{ teachers: TeacherListItem[] }>("/teachers");
   return data.teachers;
 }
 
