@@ -23,7 +23,7 @@ enum ClassStatus {
 model User {
   id                 String    @id @default(cuid())
   email              String    @unique
-  password           String
+  password           String?
   fullName           String
   role               Role
   isVerified         Boolean   @default(false)
@@ -55,6 +55,9 @@ model Class {
 
   students Student[]
   subjects Subject[]
+  
+  homeroomTeacherId String?  @unique
+  homeroomTeacher   Teacher? @relation("ClassHomeroomTeacher", fields: [homeroomTeacherId], references: [id])
 
   @@map("classes")
 }
@@ -72,16 +75,49 @@ model Subject {
   @@map("subjects")
 }
 
-model Teacher {
-  id         String   @id @default(cuid())
-  userId     String   @unique
-  user       User     @relation(fields: [userId], references: [id])
-  employeeId String?  @unique
-  phone      String?
+enum Gender {
+  MALE
+  FEMALE
+}
 
-  subjects  Subject[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+}
+
+enum Designation {
+  TEACHER
+  CASHIER
+  ADMIN
+}
+
+model Teacher {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  employeeId String? @unique   // your reference calls this "staff number" — same thing
+  gender     Gender?
+  dateOfBirth DateTime?
+  phone            String?
+  alternatePhone   String?
+  residentialAddress String?
+
+  employmentDate DateTime?
+  employmentType EmploymentType @default(FULL_TIME)
+  department     String?
+  designation    Designation    @default(TEACHER)
+
+  highestQualification       String?
+  specialization             String?
+  professionalCertification  String?
+
+  subjects     Subject[]
+  classesOwned Class[] @relation("ClassHomeroomTeacher")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("teachers")
 }
