@@ -74,3 +74,17 @@ export function createTeacherWithAssignments(input: CreateTeacherInput) {
         return { user, teacher };
     });
 }
+
+
+export function findAllTeachers() {
+  return prisma.teacher.findMany({
+    include: {
+      user: { select: { id: true, fullName: true, email: true } },
+      subjects: {
+        select: { id: true, name: true, class: { select: { id: true, className: true } } },
+      },
+      classesOwned: { select: { id: true, className: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
