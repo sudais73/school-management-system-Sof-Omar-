@@ -32,7 +32,8 @@ model User {
   otpExpiresAt       DateTime?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
-
+  refreshTokenHash      String?
+  refreshTokenExpiresAt DateTime?
   teacher Teacher?
   student Student?
   @@map("users")

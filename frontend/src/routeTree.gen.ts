@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as SetupAccountRouteImport } from './routes/setup-account'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardClassesRouteImport } from './routes/dashboard/classes'
 import { Route as DashboardStudentsRouteImport } from './routes/dashboard/students'
@@ -37,6 +38,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SetupAccountRoute = SetupAccountRouteImport.update({
+  id: '/setup-account',
+  path: '/setup-account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/setup-account': typeof SetupAccountRoute
   '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard/students': typeof DashboardStudentsRoute
   '/dashboard/subjects': typeof DashboardSubjectsRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/setup-account': typeof SetupAccountRoute
   '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard/students': typeof DashboardStudentsRoute
   '/dashboard/subjects': typeof DashboardSubjectsRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/setup-account': typeof SetupAccountRoute
   '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard/students': typeof DashboardStudentsRoute
   '/dashboard/subjects': typeof DashboardSubjectsRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/setup-account'
     | '/dashboard/classes'
     | '/dashboard/students'
     | '/dashboard/subjects'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
     | '/'
     | '/forgot-password'
     | '/login'
+    | '/setup-account'
     | '/dashboard/classes'
     | '/dashboard/students'
     | '/dashboard/subjects'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/forgot-password'
     | '/login'
+    | '/setup-account'
     | '/dashboard/classes'
     | '/dashboard/students'
     | '/dashboard/subjects'
@@ -138,6 +150,7 @@ export interface RootRouteChildren {
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  SetupAccountRoute: typeof SetupAccountRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -168,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/setup-account': {
+      id: '/setup-account'
+      path: '/setup-account'
+      fullPath: '/setup-account'
+      preLoaderRoute: typeof SetupAccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/': {
@@ -233,6 +253,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  SetupAccountRoute: SetupAccountRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

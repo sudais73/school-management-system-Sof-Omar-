@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
-const JWT_EXPIRES_IN = "1d";
+const JWT_EXPIRES_IN = "15m"; 
 
 if (!JWT_SECRET) {
   // Fail loudly at startup rather than silently signing tokens with `undefined`
