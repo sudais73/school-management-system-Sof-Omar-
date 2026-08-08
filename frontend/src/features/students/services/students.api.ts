@@ -2,7 +2,7 @@ import { apiClient } from "@/lib/api";
 import type { StudentListItem } from "@/types/student";
 
 export async function fetchStudents() {
-  const { data } = await apiClient.get<{ students: StudentListItem[] }>("/students");
+  const { data } = await apiClient.get<{ students: StudentListItem[] }>("/api/students");
   return data.students;
 }
 
@@ -29,7 +29,7 @@ export type CreateStudentPayload = {
 
 export async function createStudentRequest(payload: CreateStudentPayload) {
   const { data } = await apiClient.post<{ student: StudentListItem; generatedEmail: string; setupOtp: string }>(
-    "/students",
+    "/api/students",
     payload
   );
   return data;

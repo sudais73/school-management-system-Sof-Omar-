@@ -103,12 +103,6 @@ export const menuItems: MenuItem[] = [
     roles: ["SUPER_ADMIN", "TEACHER", "PARENT"],
   },
   {
-    label: "Live Classes",
-    href: "/dashboard/live-classes",
-    icon: Video,
-    roles: ["SUPER_ADMIN", "TEACHER", "PARENT", "STUDENT"],
-  },
-  {
     label: "Announcements",
     href: "/dashboard/announcements",
     icon: Megaphone,

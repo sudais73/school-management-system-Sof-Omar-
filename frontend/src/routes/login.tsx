@@ -4,6 +4,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import axios from "axios";
 import { apiClient } from "@/lib/api";
+import { setAuth } from "#/lib/auth-store";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -22,10 +23,9 @@ function LoginPage() {
     setLoading(true);
 
     apiClient
-      .post("/auth/login", { email, password })
+      .post("/api/auth/login", { email, password })
       .then(({ data }) => {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.role);
+       setAuth({ token: data.token, role: data.role });
 
         if (data.mustChangePassword) {
           navigate({ to: "/change-password" }); // route doesn't exist yet
@@ -34,6 +34,10 @@ function LoginPage() {
         }
       })
       .catch((err) => {
+        if (axios.isAxiosError(err) && err.response?.data?.requiresSetup) {
+          navigate({ to: "/setup-account", search: { email } });
+          return;
+        }
         const message = axios.isAxiosError(err) ? err.response?.data?.message : null;
         setError(message ?? "Login failed");
       })
