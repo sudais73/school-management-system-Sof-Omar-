@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Search, UserPlus } from "lucide-react";
+import { Search, UserPlus, Eye } from "lucide-react";
 import { fetchStudents } from "@/features/students/services/students.api";
 import { fetchClasses } from "@/features/classes/services/classes.api";
 import { AddStudentModal } from "@/features/students/components/AddStudentModal";
+import { StudentCard } from "@/features/students/components/StudentCard";
+import { ViewStudentModal } from "@/features/students/components/ViewStudentModal";
+import { ActionsMenu } from "@/components/ui/actions-menu";
 import type { StudentListItem } from "@/types/student";
 import type { SchoolClass } from "@/types/class";
 
@@ -17,6 +20,7 @@ function StudentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [viewingStudent, setViewingStudent] = useState<StudentListItem | null>(null);
 
   function loadStudents() {
     return fetchStudents().then(setStudents);
@@ -55,7 +59,7 @@ function StudentsPage() {
         <h1 className="font-serif text-2xl font-semibold text-ink">Students</h1>
         <button onClick={() => setIsAddOpen(true)} className="flex items-center gap-2 rounded-lg bg-evergreen px-4 py-2.5 text-sm font-semibold text-white hover:bg-evergreen-deep">
           <UserPlus size={16} />
-          Add Student
+          <span className="hidden sm:inline">Add Student</span>
         </button>
       </div>
 
@@ -81,22 +85,30 @@ function StudentsPage() {
 
       {loading ? (
         <p className="text-sm text-ulead-slate">Loading students...</p>
+      ) : filtered.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-ulead-line bg-chalk-card py-16 text-center text-sm text-ulead-slate">No students found.</div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-ulead-line bg-chalk-card">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="border-b border-ulead-line bg-chalk">
-                <tr>
-                  {["Name", "Class", "Admission No", "Status"].map((h) => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ulead-slate">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-ulead-line">
-                {filtered.length === 0 ? (
-                  <tr><td colSpan={4} className="py-12 text-center text-sm text-ulead-slate">No students found</td></tr>
-                ) : (
-                  filtered.map((s) => (
+        <>
+          {/* Mobile */}
+          <div className="grid grid-cols-1 gap-3 md:hidden">
+            {filtered.map((s) => (
+              <StudentCard key={s.id} student={s} onView={() => setViewingStudent(s)} />
+            ))}
+          </div>
+
+          {/* Desktop */}
+          <div className="hidden overflow-hidden rounded-2xl border border-ulead-line bg-chalk-card md:block">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="border-b border-ulead-line bg-chalk">
+                  <tr>
+                    {["Name", "Class", "Admission No", "Status", "Actions"].map((h) => (
+                      <th key={h} className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ulead-slate">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-ulead-line">
+                  {filtered.map((s) => (
                     <tr key={s.id} className="hover:bg-chalk/60">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
@@ -111,18 +123,20 @@ function StudentsPage() {
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyle[s.status]}`}>{s.status}</span>
                       </td>
+                      <td className="px-6 py-4">
+                        <ActionsMenu items={[{ label: "View profile", icon: <Eye size={14} />, onClick: () => setViewingStudent(s) }]} />
+                      </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
-      {isAddOpen && (
-        <AddStudentModal open={isAddOpen} classes={classes} onClose={() => setIsAddOpen(false)} onSuccess={loadStudents} />
-      )}
+      {isAddOpen && <AddStudentModal open={isAddOpen} classes={classes} onClose={() => setIsAddOpen(false)} onSuccess={loadStudents} />}
+      {viewingStudent && <ViewStudentModal student={viewingStudent} onClose={() => setViewingStudent(null)} />}
     </div>
   );
 }

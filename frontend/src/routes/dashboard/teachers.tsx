@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Search, UserPlus } from "lucide-react";
+import { Search, UserPlus, Eye } from "lucide-react";
 import { fetchTeachers } from "@/features/teachers/services/teachers.api";
 import { fetchClassesWithSubjects } from "@/features/subjects/services/subjects.api";
 import { AddTeacherModal } from "@/features/teachers/components/AddTeacherModal";
-import type { TeacherListItem } from "@/types/teacher";
-import type { ClassWithSubjectsForAssignment } from "@/types/teacher";
+import { TeacherCard } from "@/features/teachers/components/TeacherCard";
+import { ViewTeacherModal } from "@/features/teachers/components/ViewTeacherModal";
+import { ActionsMenu } from "@/components/ui/actions-menu";
+import type { TeacherListItem, ClassWithSubjectsForAssignment } from "@/types/teacher";
 
 export const Route = createFileRoute("/dashboard/teachers")({
   component: TeachersPage,
@@ -17,6 +19,7 @@ function TeachersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [viewingTeacher, setViewingTeacher] = useState<TeacherListItem | null>(null);
 
   function loadTeachers() {
     return fetchTeachers().then(setTeachers);
@@ -41,7 +44,7 @@ function TeachersPage() {
         <h1 className="font-serif text-2xl font-semibold text-ink">Teachers</h1>
         <button onClick={() => setIsAddOpen(true)} className="flex items-center gap-2 rounded-lg bg-evergreen px-4 py-2.5 text-sm font-semibold text-white hover:bg-evergreen-deep">
           <UserPlus size={16} />
-          Add Teacher
+          <span className="hidden sm:inline">Add Teacher</span>
         </button>
       </div>
 
@@ -61,22 +64,30 @@ function TeachersPage() {
 
       {loading ? (
         <p className="text-sm text-ulead-slate">Loading teachers...</p>
+      ) : filtered.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-ulead-line bg-chalk-card py-16 text-center text-sm text-ulead-slate">No teachers found.</div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-ulead-line bg-chalk-card">
-          <div className="hidden overflow-x-auto md:block">
-            <table className="w-full">
-              <thead className="border-b border-ulead-line bg-chalk">
-                <tr>
-                  {["Name", "Staff ID", "Department", "Designation", "Subjects"].map((h) => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ulead-slate">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-ulead-line">
-                {filtered.length === 0 ? (
-                  <tr><td colSpan={5} className="py-12 text-center text-sm text-ulead-slate">No teachers found</td></tr>
-                ) : (
-                  filtered.map((t) => (
+        <>
+          {/* Mobile */}
+          <div className="grid grid-cols-1 gap-3 md:hidden">
+            {filtered.map((t) => (
+              <TeacherCard key={t.id} teacher={t} onView={() => setViewingTeacher(t)} />
+            ))}
+          </div>
+
+          {/* Desktop */}
+          <div className="hidden overflow-hidden rounded-2xl border border-ulead-line bg-chalk-card md:block">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="border-b border-ulead-line bg-chalk">
+                  <tr>
+                    {["Name", "Staff ID", "Department", "Designation", "Subjects", "Actions"].map((h) => (
+                      <th key={h} className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ulead-slate">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-ulead-line">
+                  {filtered.map((t) => (
                     <tr key={t.id} className="hover:bg-chalk/60">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
@@ -100,18 +111,20 @@ function TeachersPage() {
                           {t.subjects.length > 2 && <span className="text-xs text-ulead-slate">+{t.subjects.length - 2} more</span>}
                         </div>
                       </td>
+                      <td className="px-6 py-4">
+                        <ActionsMenu items={[{ label: "View profile", icon: <Eye size={14} />, onClick: () => setViewingTeacher(t) }]} />
+                      </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
-      {isAddOpen && (
-        <AddTeacherModal open={isAddOpen} classes={classes} onClose={() => setIsAddOpen(false)} onSuccess={loadTeachers} />
-      )}
+      {isAddOpen && <AddTeacherModal open={isAddOpen} classes={classes} onClose={() => setIsAddOpen(false)} onSuccess={loadTeachers} />}
+      {viewingTeacher && <ViewTeacherModal teacher={viewingTeacher} onClose={() => setViewingTeacher(null)} />}
     </div>
   );
 }
