@@ -35,6 +35,8 @@ model User {
   refreshTokenHash      String?
   refreshTokenExpiresAt DateTime?
   teacher Teacher?
+    paymentsRecorded Payment[] @relation("PaymentRecordedBy")
+  paymentsEdited   Payment[] @relation("PaymentEditedBy")
   student Student?
   @@map("users")
 }
@@ -52,7 +54,7 @@ model Class {
   
   homeroomTeacherId String?  @unique
   homeroomTeacher   Teacher? @relation("ClassHomeroomTeacher", fields: [homeroomTeacherId], references: [id])
-
+  feeStructures FeeStructure[]
   @@map("classes")
 }
 
@@ -138,7 +140,7 @@ model Student {
   residentialAddress String?
   stateOfOrigin      String?
   nationality        String?
-
+  fees StudentFee[]
   classId String?
   class   Class?  @relation(fields: [classId], references: [id])
 
@@ -158,4 +160,86 @@ model Student {
   updatedAt DateTime @updatedAt
 
   @@map("students")
+}
+
+enum FeeStatus {
+  PENDING
+  PARTIAL
+  PAID
+}
+
+model FeeStructure {
+  id          String   @id @default(cuid())
+  classId     String
+  session     String
+  term        String
+  name        String
+  dueDate     DateTime
+  description String?
+
+  class       Class        @relation(fields: [classId], references: [id])
+  items       FeeItem[]
+  studentFees StudentFee[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([classId, session, term])
+  @@map("fee_structures")
+}
+
+model FeeItem {
+  id             String @id @default(cuid())
+  feeStructureId String
+  name           String
+  amount         Float
+
+  feeStructure FeeStructure @relation(fields: [feeStructureId], references: [id], onDelete: Cascade)
+
+  @@map("fee_items")
+}
+
+model StudentFee {
+  id             String    @id @default(cuid())
+  studentId      String
+  feeStructureId String
+
+  totalAmount Float
+  amountPaid  Float     @default(0)
+  balance     Float
+  status      FeeStatus @default(PENDING)
+  note        String?
+
+  student      Student      @relation(fields: [studentId], references: [id])
+  feeStructure FeeStructure @relation(fields: [feeStructureId], references: [id])
+  payments     Payment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, feeStructureId])
+  @@map("student_fees")
+}
+
+model Payment {
+  id           String   @id @default(cuid())
+  studentFeeId String
+
+  amount        Float
+  receiptNumber String?
+  note          String?
+  paymentDate   DateTime @default(now())
+
+  recordedById String
+  editedById   String?
+  editedAt     DateTime?
+
+  studentFee StudentFee @relation(fields: [studentFeeId], references: [id], onDelete: Cascade)
+  recordedBy User       @relation("PaymentRecordedBy", fields: [recordedById], references: [id])
+  editedBy   User?      @relation("PaymentEditedBy", fields: [editedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("payments")
 }
