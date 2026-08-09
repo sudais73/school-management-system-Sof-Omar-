@@ -9,6 +9,7 @@ import teachersRoutes from "./modules/teachers/teachers.routes";
 import studentsRoutes from "./modules/students/students.routes";
 import cookieParser from "cookie-parser";
 import feesRoutes from "./modules/fees/fees.routes";
+import gradesRoutes from "./modules/grades/grades.routes";
 const app = express();
 
 app.use(morgan("dev"));
@@ -26,6 +27,7 @@ app.use("/api/subjects", subjectsRoutes);
 app.use("/api/teachers", teachersRoutes);
 app.use("/api/students", studentsRoutes);
 app.use("/api/fees", feesRoutes);
+app.use("/api/teacher", gradesRoutes);
 
 
 export default app;

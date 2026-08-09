@@ -51,7 +51,7 @@ model Class {
 
   students Student[]
   subjects Subject[]
-  
+   gradeStructures GradeStructure[]
   homeroomTeacherId String?  @unique
   homeroomTeacher   Teacher? @relation("ClassHomeroomTeacher", fields: [homeroomTeacherId], references: [id])
   feeStructures FeeStructure[]
@@ -66,7 +66,7 @@ model Subject {
 
   class   Class    @relation(fields: [classId], references: [id])
   teacher Teacher? @relation(fields: [teacherId], references: [id])
-
+ gradeStructures GradeStructure[]
   @@unique([classId, name])
   @@map("subjects")
 }
@@ -111,7 +111,7 @@ model Teacher {
 
   subjects     Subject[]
   classesOwned Class[] @relation("ClassHomeroomTeacher")
-
+ gradeStructures GradeStructure[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -141,6 +141,7 @@ model Student {
   stateOfOrigin      String?
   nationality        String?
   fees StudentFee[]
+  marks StudentMark[]
   classId String?
   class   Class?  @relation(fields: [classId], references: [id])
 
@@ -242,4 +243,66 @@ model Payment {
   updatedAt DateTime @updatedAt
 
   @@map("payments")
+}
+
+enum ComponentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model GradeStructure {
+  id        String @id @default(cuid())
+  teacherId String
+  classId   String
+  subjectId String
+  title     String
+  term      String
+  session   String
+
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+  class   Class   @relation(fields: [classId], references: [id])
+  subject Subject @relation(fields: [subjectId], references: [id])
+
+  components GradeComponent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([teacherId, classId, subjectId, term, session])
+  @@map("grade_structures")
+}
+
+model GradeComponent {
+  id               String          @id @default(cuid())
+  gradeStructureId String
+  name             String
+  maxScore         Float
+  order            Int             @default(0)
+  status           ComponentStatus @default(DRAFT)
+  publishedAt      DateTime?
+
+  gradeStructure GradeStructure @relation(fields: [gradeStructureId], references: [id], onDelete: Cascade)
+  studentMarks   StudentMark[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([gradeStructureId])
+  @@map("grade_components")
+}
+
+model StudentMark {
+  id               String @id @default(cuid())
+  gradeComponentId String
+  studentId        String
+  score            Float
+
+  gradeComponent GradeComponent @relation(fields: [gradeComponentId], references: [id], onDelete: Cascade)
+  student        Student        @relation(fields: [studentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([gradeComponentId, studentId])
+  @@map("student_marks")
 }
