@@ -7,6 +7,7 @@ import { AddFeeStructureForm } from "@/features/fees/components/AddFeeStructureF
 import { PaymentModal } from "@/features/fees/components/PaymentModal";
 import type { SchoolClass } from "@/types/class";
 import type { FeeStructure, StudentFeeRecord } from "@/types/fee";
+import { FeeCard } from "#/features/fees/components/FeeCard";
 
 export const Route = createFileRoute("/dashboard/fees")({
   component: FeesPage,
@@ -136,9 +137,14 @@ function FeesPage() {
           </div>
         </div>
       )}
-
+{/* Mobile */}
+    <div className="grid grid-cols-1 gap-3 md:hidden">
+      {fees.map((fee) => (
+        <FeeCard key={fee.id} fee={fee} onPay={() => setPayingFee(fee)} />
+      ))}
+    </div>
       {fees.length > 0 && (
-        <div className="overflow-hidden rounded-2xl border border-ulead-line bg-chalk-card">
+        <div className="hidden md:block overflow-hidden rounded-2xl border border-ulead-line bg-chalk-card">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="border-b border-ulead-line bg-chalk">
