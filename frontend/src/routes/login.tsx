@@ -28,7 +28,7 @@ function LoginPage() {
        setAuth({ token: data.token, role: data.role });
 
         if (data.mustChangePassword) {
-          navigate({ to: "/change-password" }); // route doesn't exist yet
+          navigate({ to: "/setup-account" }); // route doesn't exist yet
         } else {
           navigate({ to: "/dashboard" });
         }
