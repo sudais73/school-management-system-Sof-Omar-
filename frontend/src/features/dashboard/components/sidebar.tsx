@@ -1,5 +1,4 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Sparkles } from "lucide-react";
 import { menuItems, type Role } from "@/features/dashboard/menu-items";
 
 type SidebarProps = {
