@@ -51,6 +51,7 @@ model Class {
 
   students Student[]
   subjects Subject[]
+  attendances Attendance[] 
    gradeStructures GradeStructure[]
   homeroomTeacherId String?  @unique
   homeroomTeacher   Teacher? @relation("ClassHomeroomTeacher", fields: [homeroomTeacherId], references: [id])
@@ -67,6 +68,7 @@ model Subject {
   class   Class    @relation(fields: [classId], references: [id])
   teacher Teacher? @relation(fields: [teacherId], references: [id])
  gradeStructures GradeStructure[]
+ 
   @@unique([classId, name])
   @@map("subjects")
 }
@@ -110,6 +112,7 @@ model Teacher {
   professionalCertification  String?
 
   subjects     Subject[]
+  attendances Attendance[] 
   classesOwned Class[] @relation("ClassHomeroomTeacher")
  gradeStructures GradeStructure[]
   createdAt DateTime @default(now())
@@ -142,6 +145,7 @@ model Student {
   nationality        String?
   fees StudentFee[]
   marks StudentMark[]
+  attendanceRecords AttendanceRecord[]
   classId String?
   class   Class?  @relation(fields: [classId], references: [id])
 
@@ -305,4 +309,49 @@ model StudentMark {
 
   @@unique([gradeComponentId, studentId])
   @@map("student_marks")
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  classId   String
+  teacherId String
+  date      DateTime // date-only — always normalized to midnight, see note below
+
+  class   Class   @relation(fields: [classId], references: [id])
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+  records AttendanceRecord[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([classId, date])
+  @@index([classId])
+  @@index([teacherId])
+  @@map("attendances")
+}
+
+model AttendanceRecord {
+  id           String           @id @default(cuid())
+  attendanceId String
+  studentId    String
+  status       AttendanceStatus @default(ABSENT)
+  note         String?
+
+  attendance Attendance @relation(fields: [attendanceId], references: [id], onDelete: Cascade)
+  student    Student    @relation(fields: [studentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([attendanceId, studentId])
+  @@index([attendanceId])
+  @@index([studentId])
+  @@map("attendance_records")
 }

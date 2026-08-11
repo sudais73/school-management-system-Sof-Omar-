@@ -10,6 +10,7 @@ import studentsRoutes from "./modules/students/students.routes";
 import cookieParser from "cookie-parser";
 import feesRoutes from "./modules/fees/fees.routes";
 import gradesRoutes from "./modules/grades/grades.routes";
+import teacherAttendanceRoutes from "./modules/attendance/attendance.routes";
 const app = express();
 
 app.use(morgan("dev"));
@@ -28,6 +29,7 @@ app.use("/api/teachers", teachersRoutes);
 app.use("/api/students", studentsRoutes);
 app.use("/api/fees", feesRoutes);
 app.use("/api/teacher", gradesRoutes);
+app.use("/api/teacher", teacherAttendanceRoutes);
 
 
 export default app;
