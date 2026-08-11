@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-   "dev": "ts-node-dev --files --require tsconfig-paths/register --respawn src/app.ts",
-    "build": "tsc",
+    "dev": "ts-node-dev --files --require tsconfig-paths/register --respawn src/app.ts",
+    "build": "tsc && tsc-alias",
     "start": "node dist/app.js"
   },
   "keywords": [],
@@ -33,8 +33,9 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.2.0",
     "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.9.1",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.23.5",
     "typescript": "^5.7.3"

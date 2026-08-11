@@ -1,25 +1,16 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "types": [
-      "node"
-    ],
-    "baseUrl": "./src",
+    "types": ["node"],
     "paths": {
-      "@/*": [
-        "*"
-      ]
+      "@/*": ["./src/*"]
     },
     "module": "CommonJS",
     "rootDir": "./src",
     "outDir": "./dist",
     "strict": true,
-    "ignoreDeprecations": "6.0",
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  
   "include": ["src/**/*.ts", "src/**/*.d.ts"]
-
-  
 }
