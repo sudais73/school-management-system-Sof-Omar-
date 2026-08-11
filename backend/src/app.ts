@@ -22,6 +22,7 @@ app.listen(env.PORT, () => {
 app.use(cors({ origin: env.FRONTEND_URL, credentials: true })); // was: app.use(cors())
 app.use(cookieParser());
 
+
 app.use("/api/auth", authRoutes);
 app.use("/api/classes", classesRoutes);
 app.use("/api/subjects", subjectsRoutes);
