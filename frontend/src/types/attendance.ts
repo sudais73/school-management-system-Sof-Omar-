@@ -1,0 +1,1 @@
+export type AttendanceStatus = "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";

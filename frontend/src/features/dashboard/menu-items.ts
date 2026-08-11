@@ -72,7 +72,7 @@ export const menuItems: MenuItem[] = [
   },
   {
     label: "Attendance",
-    href: "/dashboard/attendance",
+    href: "/dashboard/teacher/attendance",
     icon: ClipboardList,
     roles: ["TEACHER"],
   },
