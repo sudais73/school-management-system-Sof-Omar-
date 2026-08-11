@@ -20,6 +20,7 @@ import { Route as DashboardFeesRouteImport } from './routes/dashboard/fees'
 import { Route as DashboardStudentsRouteImport } from './routes/dashboard/students'
 import { Route as DashboardSubjectsRouteImport } from './routes/dashboard/subjects'
 import { Route as DashboardTeachersRouteImport } from './routes/dashboard/teachers'
+import { Route as DashboardTeacherAttendanceRouteImport } from './routes/dashboard/teacher/attendance'
 import { Route as DashboardTeacherMyClassesRouteImport } from './routes/dashboard/teacher/my-classes'
 
 const IndexRoute = IndexRouteImport.update({
@@ -77,6 +78,12 @@ const DashboardTeachersRoute = DashboardTeachersRouteImport.update({
   path: '/teachers',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardTeacherAttendanceRoute =
+  DashboardTeacherAttendanceRouteImport.update({
+    id: '/teacher/attendance',
+    path: '/teacher/attendance',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 const DashboardTeacherMyClassesRoute =
   DashboardTeacherMyClassesRouteImport.update({
     id: '/teacher/my-classes',
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/subjects': typeof DashboardSubjectsRoute
   '/dashboard/teachers': typeof DashboardTeachersRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/teacher/attendance': typeof DashboardTeacherAttendanceRoute
   '/dashboard/teacher/my-classes': typeof DashboardTeacherMyClassesRoute
 }
 export interface FileRoutesByTo {
@@ -109,6 +117,7 @@ export interface FileRoutesByTo {
   '/dashboard/subjects': typeof DashboardSubjectsRoute
   '/dashboard/teachers': typeof DashboardTeachersRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/teacher/attendance': typeof DashboardTeacherAttendanceRoute
   '/dashboard/teacher/my-classes': typeof DashboardTeacherMyClassesRoute
 }
 export interface FileRoutesById {
@@ -124,6 +133,7 @@ export interface FileRoutesById {
   '/dashboard/subjects': typeof DashboardSubjectsRoute
   '/dashboard/teachers': typeof DashboardTeachersRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/teacher/attendance': typeof DashboardTeacherAttendanceRoute
   '/dashboard/teacher/my-classes': typeof DashboardTeacherMyClassesRoute
 }
 export interface FileRouteTypes {
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/dashboard/subjects'
     | '/dashboard/teachers'
     | '/dashboard/'
+    | '/dashboard/teacher/attendance'
     | '/dashboard/teacher/my-classes'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/dashboard/subjects'
     | '/dashboard/teachers'
     | '/dashboard'
+    | '/dashboard/teacher/attendance'
     | '/dashboard/teacher/my-classes'
   id:
     | '__root__'
@@ -167,6 +179,7 @@ export interface FileRouteTypes {
     | '/dashboard/subjects'
     | '/dashboard/teachers'
     | '/dashboard/'
+    | '/dashboard/teacher/attendance'
     | '/dashboard/teacher/my-classes'
   fileRoutesById: FileRoutesById
 }
@@ -257,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardTeachersRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/teacher/attendance': {
+      id: '/dashboard/teacher/attendance'
+      path: '/teacher/attendance'
+      fullPath: '/dashboard/teacher/attendance'
+      preLoaderRoute: typeof DashboardTeacherAttendanceRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/dashboard/teacher/my-classes': {
       id: '/dashboard/teacher/my-classes'
       path: '/teacher/my-classes'
@@ -274,6 +294,7 @@ interface DashboardRouteRouteChildren {
   DashboardSubjectsRoute: typeof DashboardSubjectsRoute
   DashboardTeachersRoute: typeof DashboardTeachersRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardTeacherAttendanceRoute: typeof DashboardTeacherAttendanceRoute
   DashboardTeacherMyClassesRoute: typeof DashboardTeacherMyClassesRoute
 }
 
@@ -284,6 +305,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardSubjectsRoute: DashboardSubjectsRoute,
   DashboardTeachersRoute: DashboardTeachersRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardTeacherAttendanceRoute: DashboardTeacherAttendanceRoute,
   DashboardTeacherMyClassesRoute: DashboardTeacherMyClassesRoute,
 }
 
