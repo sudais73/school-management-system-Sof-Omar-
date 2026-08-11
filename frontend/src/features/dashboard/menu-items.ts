@@ -11,7 +11,7 @@ import {
   UserCircle,
   School,
   User,
-  Video,
+  
   type LucideIcon,
 } from "lucide-react";
 

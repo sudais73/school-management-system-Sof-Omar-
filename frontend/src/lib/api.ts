@@ -1,9 +1,12 @@
 import axios from "axios";
 import { getAuthState, setAuth, clearAuth } from "./auth-store";
 
+
 export const apiClient = axios.create({
-  baseURL: "https://school-management-system-sof-omar-3.onrender.com",
-  withCredentials: true, // sends the refresh-token cookie automatically
+  baseURL:
+    import.meta.env.VITE_API_BASE_URL,
+  
+  withCredentials: true,
 });
 
 apiClient.interceptors.request.use((config) => {
