@@ -27,6 +27,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [role, setRole] = useState<Role | null>(getAuthState().role);
   const [checked, setChecked] = useState(!!getAuthState().token);
+  const[openSidebar, setOpenSidebar] = useState(false);
 
   useEffect(() => {
     if (getAuthState().token) return;
@@ -54,9 +55,9 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex h-screen bg-chalk">
-      <Sidebar role={role} />
+      <Sidebar  open={openSidebar} onChange={()=>setOpenSidebar(!open)} role={role} />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Topbar role={role} />
+        <Topbar open={openSidebar} onOpenChange={setOpenSidebar} role={role} />
         <main className="flex-1 overflow-y-auto p-8">{children}</main>
       </div>
     </div>

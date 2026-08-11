@@ -1,5 +1,5 @@
 
-import { UserCircle } from "lucide-react";
+import { MenuIcon, UserCircle } from "lucide-react";
 import type { Role } from "@/features/dashboard/menu-items";
 import { clearAuth } from "@/lib/auth-store";
 import { apiClient } from "@/lib/api";
@@ -7,9 +7,11 @@ import { useNavigate } from "@tanstack/react-router";
 
 type TopbarProps = {
   role: Role;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
 
-export function Topbar({ role }: TopbarProps) {
+export function Topbar({ role, open, onOpenChange }: TopbarProps) {
   const navigate = useNavigate();
 
   async function handleLogout() {
@@ -24,7 +26,8 @@ export function Topbar({ role }: TopbarProps) {
     <header className="p-4">
       {/* Temporary — swap for the real page title once routes/pages exist */}
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-grey-400">Dashboard</h1>
+        <MenuIcon onClick={() => onOpenChange(!open)} size={20} className="md:hidden text-grey-400" />
+        <h1 className="hidden md:block text-lg font-semibold text-grey-400">Dashboard</h1>
 
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 rounded-lg border border-ulead-line px-3 py-1.5">

@@ -2,7 +2,7 @@ import axios from "axios";
 import { getAuthState, setAuth, clearAuth } from "./auth-store";
 
 export const apiClient = axios.create({
-  baseURL: "https://school-management-system-sof-omar-3.onrender.com",
+  baseURL: "http://localhost:5000",
   withCredentials: true, // sends the refresh-token cookie automatically
 });
 
