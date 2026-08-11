@@ -31,7 +31,7 @@ export function Roles() {
         <h2 className="font-serif text-3xl font-semibold tracking-tight text-ink">One system, every role</h2>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         {roles.map((role) => (
           <div key={role.tag} className="rounded-2xl border border-ulead-line bg-chalk-card p-6">
             <div className="mb-2.5 font-mono text-[11px] uppercase tracking-wide text-marigold-deep">

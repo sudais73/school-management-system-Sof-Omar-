@@ -32,7 +32,7 @@ export function Navbar() {
           </Link>
           <Link
             to="/login"
-            className="rounded-lg bg-green px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-evergreen-deep"
+            className=" hidden md:block rounded-lg bg-green px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-evergreen-deep"
           >
             Get started
           </Link>
