@@ -27,16 +27,22 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'School Management System',
       },
     ],
+
     links: [
       {
         rel: 'stylesheet',
         href: appCss,
       },
+      {
+        rel: 'manifest',
+        href: '/manifest.webmanifest',
+      },
     ],
   }),
+
   shellComponent: RootDocument,
 })
 
@@ -46,8 +52,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
+
       <body>
         {children}
+
         <TanStackDevtools
           config={{
             position: 'bottom-right',
@@ -60,6 +68,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             TanStackQueryDevtools,
           ]}
         />
+
         <Scripts />
       </body>
     </html>
