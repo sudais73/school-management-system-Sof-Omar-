@@ -37,6 +37,10 @@ model User {
   teacher Teacher?
     paymentsRecorded Payment[] @relation("PaymentRecordedBy")
   paymentsEdited   Payment[] @relation("PaymentEditedBy")
+  parent                Parent?
+  createdConversations  Conversation[]            @relation("CreatedConversations")
+  conversationsJoined   ConversationParticipant[]
+  sentMessages          Message[]                 @relation("SentMessages")
   student Student?
   @@map("users")
 }
@@ -146,6 +150,7 @@ model Student {
   fees StudentFee[]
   marks StudentMark[]
   attendanceRecords AttendanceRecord[]
+   parents Parent[] @relation("ParentToStudent")
   classId String?
   class   Class?  @relation(fields: [classId], references: [id])
 
@@ -354,4 +359,73 @@ model AttendanceRecord {
   @@index([attendanceId])
   @@index([studentId])
   @@map("attendance_records")
+}
+
+model Parent {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+  phone  String?
+
+  students Student[] @relation("ParentToStudent")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("parents")
+}
+
+enum ConversationType {
+  DIRECT
+  GROUP
+}
+
+model Conversation {
+  id          String           @id @default(cuid())
+  type        ConversationType
+  name        String?
+  createdById String
+
+  createdBy    User                      @relation("CreatedConversations", fields: [createdById], references: [id])
+  participants ConversationParticipant[]
+  messages     Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("conversations")
+}
+
+model ConversationParticipant {
+  id             String   @id @default(cuid())
+  conversationId String
+  userId         String
+  lastReadAt     DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([conversationId, userId])
+  @@index([conversationId])
+  @@index([userId])
+  @@map("conversation_participants")
+}
+
+model Message {
+  id             String @id @default(cuid())
+  conversationId String
+  senderId       String
+  body           String
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation("SentMessages", fields: [senderId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@map("messages")
 }
