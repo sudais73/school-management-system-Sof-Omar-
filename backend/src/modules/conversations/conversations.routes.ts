@@ -3,6 +3,7 @@ import { requireAuth } from "@/middleware/auth.middleware";
 import {
   listConversationsHandler, getConversationHandler,
   createConversationHandler, sendMessageHandler,
+  listContactsHandler,
 } from "./conversations.controller";
 
 const router = Router();
@@ -10,6 +11,7 @@ router.use(requireAuth);
 
 router.get("/", listConversationsHandler);
 router.post("/", createConversationHandler);
+router.get("/contacts", listContactsHandler); 
 router.get("/:id", getConversationHandler);
 router.post("/:id", sendMessageHandler);
 

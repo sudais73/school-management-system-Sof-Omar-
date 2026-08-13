@@ -105,3 +105,12 @@ export async function sendMessage(conversationId: string, senderId: string, body
 
   return message;
 }
+
+export async function getEligibleContacts(userId: string, role: string) {
+  const allowed = ALLOWED_CONTACTS[role] ?? [];
+  return prisma.user.findMany({
+    where: { role: { in: allowed as any }, id: { not: userId } },
+    select: { id: true, fullName: true, role: true },
+    orderBy: { fullName: "asc" },
+  });
+}

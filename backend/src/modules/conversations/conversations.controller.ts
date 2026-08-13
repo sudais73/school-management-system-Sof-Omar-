@@ -40,3 +40,8 @@ export async function sendMessageHandler(req: Request, res: Response) {
   const message = await service.sendMessage(conversationId, req.user!.userId, body.trim());
   res.status(201).json({ message });
 }
+
+export async function listContactsHandler(req: Request, res: Response) {
+  const contacts = await service.getEligibleContacts(req.user!.userId, req.user!.role);
+  res.status(200).json({ contacts });
+}
