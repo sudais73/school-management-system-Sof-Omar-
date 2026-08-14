@@ -4,9 +4,9 @@ import { loginUser, logoutUser, refreshSession, setupAccount } from "./auth.serv
 const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: "lax" as const,
+  sameSite: process.env.NODE_ENV === "production" ? "none" as const : "lax" as const,
   maxAge: 30 * 24 * 60 * 60 * 1000,
-  path: "/api/auth", // cookie only sent to auth endpoints, not every request
+  path: "/api/auth",
 };
 export async function login(req: Request, res: Response) {
   const { email, password } = req.body;
