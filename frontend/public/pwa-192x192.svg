@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Rounded App Background -->
+  <rect width="512" height="512" rx="112" fill="#3B82F6"/>
+  
+  <!-- Graduation Cap Top -->
+  <path d="M256 144L88 232L256 320L424 232L256 144Z" fill="#FFFFFF"/>
+  
+  <!-- Graduation Cap Base -->
+  <path d="M144 274v78c0 38 50 68 112 68s112-30 112-68v-78l-112 58l-112-58z" fill="#FFFFFF" opacity="0.9"/>
+  
+  <!-- Tassel -->
+  <path d="M424 256v88" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="424" cy="364" r="20" fill="#FFFFFF"/>
+</svg>
