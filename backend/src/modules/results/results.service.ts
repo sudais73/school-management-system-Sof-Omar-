@@ -63,5 +63,5 @@ export async function getClassResults(classId: string, session: string, term: st
     };
   });
 
-  return { className: withScores[0]?.class?.className ?? "", session, term, students: results };
+  return { className: "", session, term, students: results };
 }
