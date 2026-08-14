@@ -1,7 +1,7 @@
 import { AuthLayout } from "#/components/layouts/auth-layout";
 import { AuthField } from "#/features/auth/components/auth-field";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { apiClient } from "@/lib/api";
 import { setAuth } from "#/lib/auth-store";
@@ -16,7 +16,26 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
+  
+useEffect(() => {
+    apiClient
+      .post("/api/auth/refresh")
+      .then(({ data }) => {
+        setAuth({ token: data.token, role: data.role });
+        navigate({ to: "/dashboard" });
+      })
+      .catch(() => {
+        // No valid session — that's fine, just show the login form
+        setCheckingSession(false);
+      });
+  }, [navigate]);
 
+  if (checkingSession) {
+    return null; // or a small spinner if a blank flash bothers you
+  }
+
+  
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
