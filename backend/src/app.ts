@@ -13,6 +13,7 @@ import gradesRoutes from "./modules/grades/grades.routes";
 import teacherAttendanceRoutes from "./modules/attendance/attendance.routes";
 import parentsRoutes from "./modules/parents/parents.routes";
 import conversationsRoutes from "./modules/conversations/conversations.routes";
+import resultsRoutes from "./modules/results/results.routes";
 const app = express();
 
 app.use(morgan("dev"));
@@ -35,6 +36,7 @@ app.use("/api/teacher", gradesRoutes);
 app.use("/api/teacher", teacherAttendanceRoutes);
 app.use("/api/parents", parentsRoutes);
 app.use("/api/conversations", conversationsRoutes);
+app.use("/api/admin/results", resultsRoutes);
 
 
 export default app;
