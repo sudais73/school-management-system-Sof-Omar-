@@ -14,6 +14,6 @@ export async function addStudent(input: AddStudentInput) {
   return { user, student, otp, email };
 }
 
-export function getStudents() {
-  return findAllStudents();
+export function getStudents(search?: string) {
+  return findAllStudents(search);
 }

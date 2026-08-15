@@ -68,9 +68,17 @@ export function createStudentWithUser(input: CreateStudentInput) {
     return { user, student };
   });
 }
-
-export function findAllStudents() {
+export function findAllStudents(search?: string) {
   return prisma.student.findMany({
+    where: search
+      ? {
+          OR: [
+            { firstName: { contains: search, mode: "insensitive" } },
+            { lastName: { contains: search, mode: "insensitive" } },
+            { admissionNumber: { contains: search, mode: "insensitive" } },
+          ],
+        }
+      : undefined,
     include: {
       user: { select: { id: true, email: true } },
       class: { select: { id: true, className: true } },
