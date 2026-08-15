@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
 import { addStudent, getStudents } from "./students.service";
 
-export async function listStudentsHandler(_req: Request, res: Response) {
-  const students = await getStudents();
+export async function listStudentsHandler(req: Request, res: Response) {
+  const students = await getStudents(req.query.search ? String(req.query.search) : undefined);
   res.status(200).json({ students });
 }
 

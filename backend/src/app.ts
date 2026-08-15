@@ -14,6 +14,7 @@ import teacherAttendanceRoutes from "./modules/attendance/attendance.routes";
 import parentsRoutes from "./modules/parents/parents.routes";
 import conversationsRoutes from "./modules/conversations/conversations.routes";
 import resultsRoutes from "./modules/results/results.routes";
+import adminAttendanceRoutes from "./modules/admin-attendance/admin-attendance.routes";
 const app = express();
 
 app.use(morgan("dev"));
@@ -37,6 +38,6 @@ app.use("/api/teacher", teacherAttendanceRoutes);
 app.use("/api/parents", parentsRoutes);
 app.use("/api/conversations", conversationsRoutes);
 app.use("/api/admin/results", resultsRoutes);
-
+app.use("/api/admin/attendance", adminAttendanceRoutes);
 
 export default app;
