@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { loginUser, logoutUser, refreshSession, setupAccount } from "./auth.service";
+import { loginUser, logoutUser, refreshSession, regenerateSetupOtp, setupAccount } from "./auth.service";
 
 const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
@@ -60,4 +60,16 @@ export async function logout(req: Request, res: Response) {
   await logoutUser(req.cookies?.refreshToken);
   res.clearCookie("refreshToken", { path: "/api/auth" });
   res.status(200).json({ message: "Logged out" });
+}
+
+export async function regenerateOtpHandler(req: Request, res: Response) {
+  const userId = Array.isArray(req.params.userId) ? req.params.userId[0] : req.params.userId;
+
+  if (!userId) {
+    return res.status(400).json({ message: "User id is required" });
+  }
+
+  const result = await regenerateSetupOtp(userId);
+  if (!result.success) return res.status(400).json({ message: result.message });
+  res.status(200).json({ setupOtp: result.otp });
 }

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Search, UserPlus, Eye } from "lucide-react";
+import { Search, UserPlus, Eye, KeyRound } from "lucide-react";
 import { fetchTeachers } from "@/features/teachers/services/teachers.api";
 import { fetchClassesWithSubjects } from "@/features/subjects/services/subjects.api";
 import { AddTeacherModal } from "@/features/teachers/components/AddTeacherModal";
@@ -8,6 +8,8 @@ import { TeacherCard } from "@/features/teachers/components/TeacherCard";
 import { ViewTeacherModal } from "@/features/teachers/components/ViewTeacherModal";
 import { ActionsMenu } from "@/components/ui/actions-menu";
 import type { TeacherListItem, ClassWithSubjectsForAssignment } from "@/types/teacher";
+import { apiClient } from "#/lib/api";
+import { OtpResultModal } from "#/components/ui/OtpResultModal";
 
 export const Route = createFileRoute("/dashboard/teachers")({
   component: TeachersPage,
@@ -20,7 +22,15 @@ function TeachersPage() {
   const [loading, setLoading] = useState(true);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [viewingTeacher, setViewingTeacher] = useState<TeacherListItem | null>(null);
-
+const [otpResult, setOtpResult] = useState<{ otp: string; name: string } | null>(null);
+async function handleResendOtp(userId: string, name: string) {
+  try {
+    const { data } = await apiClient.post(`/api/auth/regenerate-otp/${userId}`);
+    setOtpResult({ otp: data.setupOtp, name });
+  } catch (err: any) {
+    alert(err.response?.data?.message ?? "Failed to regenerate code");
+  }
+}
   function loadTeachers() {
     return fetchTeachers().then(setTeachers);
   }
@@ -71,7 +81,7 @@ function TeachersPage() {
           {/* Mobile */}
           <div className="grid grid-cols-1 gap-3 md:hidden">
             {filtered.map((t) => (
-              <TeacherCard key={t.id} teacher={t} onView={() => setViewingTeacher(t)} />
+              <TeacherCard handleResendOtp={()=>handleResendOtp(t.user.id, t.user.fullName)} key={t.id} teacher={t} onView={() => setViewingTeacher(t)} />
             ))}
           </div>
 
@@ -112,7 +122,7 @@ function TeachersPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <ActionsMenu items={[{ label: "View profile", icon: <Eye size={14} />, onClick: () => setViewingTeacher(t) }]} />
+                        <ActionsMenu items={[{ label: "View profile", icon: <Eye size={14} />, onClick: () => setViewingTeacher(t) },{ label: "Resend setup code", icon: <KeyRound size={14} />, onClick: () => handleResendOtp(t.user.id, t.user.fullName) }]} />
                       </td>
                     </tr>
                   ))}
@@ -125,6 +135,7 @@ function TeachersPage() {
 
       {isAddOpen && <AddTeacherModal open={isAddOpen} classes={classes} onClose={() => setIsAddOpen(false)} onSuccess={loadTeachers} />}
       {viewingTeacher && <ViewTeacherModal teacher={viewingTeacher} onClose={() => setViewingTeacher(null)} />}
+        {otpResult && <OtpResultModal otp={otpResult.otp} personName={otpResult.name} onClose={() => setOtpResult(null)} />}
     </div>
   );
 }

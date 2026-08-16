@@ -1,10 +1,11 @@
 import { comparePassword, hashPassword } from "@/utils/hash.utils";
-import { findUserByEmail } from "../users/users.repository";
+import { findUserByEmail, findUserById, setUserOtp } from "../users/users.repository";
 import { signToken } from "@/utils/jwt.util";
 import prisma from "@/config/prisma";
 
 import { generateRefreshToken, hashRefreshToken } from "@/utils/refresh-token.util";
 import { setRefreshToken, clearRefreshToken, findUserByRefreshTokenHash } from "@/modules/users/users.repository";
+import { generateOtp } from "@/utils/otp.util";
 
 const REFRESH_TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
@@ -94,4 +95,18 @@ export async function setupAccount(email: string, otp: string, newPassword: stri
   });
 
   return { success: true as const };
+}
+
+
+export async function regenerateSetupOtp(userId: string) {
+  const user = await findUserById(userId);
+  if (!user) return { success: false as const, message: "User not found" };
+
+  if (user.password) {
+    return { success: false as const, message: "This account is already active — OTP regeneration is only for accounts still pending setup" };
+  }
+
+  const { otp, expiresAt } = generateOtp();
+  await setUserOtp(userId, otp, expiresAt);
+  return { success: true as const, otp };
 }

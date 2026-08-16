@@ -22,3 +22,15 @@ export function clearRefreshToken(userId: string) {
 export function findUserByRefreshTokenHash(tokenHash: string) {
   return prisma.user.findFirst({ where: { refreshTokenHash: tokenHash } });
 }
+
+export function findUserById(id: string) {
+  return prisma.user.findUnique({ where: { id } });
+}
+
+export function setUserOtp(id: string, otp: string, otpExpiresAt: Date) {
+  return prisma.user.update({ where: { id }, data: { otp, otpExpiresAt } });
+}
+
+export function clearUserOtp(id: string) {
+  return prisma.user.update({ where: { id }, data: { otp: null, otpExpiresAt: null } });
+}
