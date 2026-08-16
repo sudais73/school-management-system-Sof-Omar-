@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import netlify from "@netlify/vite-plugin-tanstack-start";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
@@ -15,7 +14,6 @@ export default defineConfig({
     devtools(),
     tailwindcss(),
     tanstackStart(),
-    netlify(),
     viteReact(),
 
     VitePWA({
@@ -42,15 +40,15 @@ export default defineConfig({
           {
             src: "/pwa.jpg",
             sizes: "192x192",
-            type: "image/jpg+xml",
+            type: "image/jpeg",
           },
           {
-           src: "/pwa1.jpg",
+            src: "/pwa1.jpg",
             sizes: "512x512",
-            type: "image/jpg+xml",
+            type: "image/jpeg",
           },
           {
-           src: "/pwa-192x192.svg",
+            src: "/pwa-192x192.svg",
             sizes: "512x512",
             type: "image/svg+xml",
             purpose: "any maskable",
