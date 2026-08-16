@@ -19,3 +19,14 @@ export function createParentWithUser(data: { fullName: string; email: string; ph
 export function linkParentToStudent(parentId: string, studentId: string) {
   return prisma.parent.update({ where: { id: parentId }, data: { students: { connect: { id: studentId } } } });
 }
+
+export function findParentByUserId(userId: string) {
+  return prisma.parent.findUnique({
+    where: { userId },
+    include: {
+      students: {
+        select: { id: true, firstName: true, lastName: true, admissionNumber: true, gender: true, class: { select: { className: true } } },
+      },
+    },
+  });
+}

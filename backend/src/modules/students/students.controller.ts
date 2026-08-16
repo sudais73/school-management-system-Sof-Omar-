@@ -26,5 +26,11 @@ export async function createStudentHandler(req: Request, res: Response) {
     guardianName, guardianRelationship, guardianPhone, guardianOccupation, guardianEmail, guardianAddress,
   });
 
-  res.status(201).json({ student: result.student, generatedEmail: result.email, setupOtp: result.otp });
+ res.status(201).json({
+  student: result.student,
+  generatedEmail: result.email,
+  setupOtp: result.otp,
+  parentSetupOtp: result.parent?.otp ?? null,
+  parentAlreadyExisted: result.parent?.alreadyExisted ?? false,
+});
 }
