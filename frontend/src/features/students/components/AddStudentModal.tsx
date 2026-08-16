@@ -16,6 +16,8 @@ const RELATIONSHIP_OPTIONS = ["Father", "Mother", "Guardian", "Uncle", "Aunt", "
 const STATUS_OPTIONS = ["ACTIVE", "GRADUATED", "SUSPENDED", "INACTIVE"];
 
 export function AddStudentModal({ open, onClose, classes, onSuccess }: AddStudentModalProps) {
+
+
   const [form, setForm] = useState({
     firstName: "", middleName: "", lastName: "", gender: "MALE", dateOfBirth: "",
     residentialAddress: "", stateOfOrigin: "", nationality: "",
@@ -25,7 +27,7 @@ export function AddStudentModal({ open, onClose, classes, onSuccess }: AddStuden
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<{ email: string; otp: string } | null>(null);
+  const [result, setResult] = useState<{ email: string; otp: string; parentOtp: string | null; parentAlreadyExisted: boolean } | null>(null);
 
   if (!open) return null;
 
@@ -43,7 +45,7 @@ export function AddStudentModal({ open, onClose, classes, onSuccess }: AddStuden
     setLoading(true);
     try {
       const res = await createStudentRequest(form);
-      setResult({ email: res.generatedEmail, otp: res.setupOtp });
+      setResult({ email: res.generatedEmail, otp: res.setupOtp, parentOtp: res.parentSetupOtp, parentAlreadyExisted: res.parentAlreadyExisted });
       onSuccess();
     } catch (err: any) {
       setError(err.response?.data?.message ?? "Failed to add student");
@@ -73,11 +75,27 @@ export function AddStudentModal({ open, onClose, classes, onSuccess }: AddStuden
                 <p className="mt-3 text-sm text-ulead-slate">One-time setup code — share with the guardian:</p>
                 <p className="mt-1 rounded-lg bg-white px-3 py-2 font-mono text-lg font-semibold tracking-wider text-evergreen-deep">{result.otp}</p>
               </div>
+              {result.parentOtp && (
+                <div className="mt-4 rounded-xl border border-marigold/30 bg-marigold/10 p-4">
+                  <p className="text-sm font-semibold text-ink">Guardian account created</p>
+                  <p className="mt-1 text-sm text-ulead-slate">Setup code — share with {form.guardianName}:</p>
+                  <p className="mt-1 rounded-lg bg-white px-3 py-2 font-mono text-lg font-semibold tracking-wider text-marigold-deep">{result.parentOtp}</p>
+                </div>
+              )}
+              {result.parentAlreadyExisted && (
+                <p className="mt-4 text-sm text-ulead-slate">
+                  This guardian already has an account (linked to a sibling) — no new setup code needed, this student was just added to their existing login.
+                </p>
+              )}
             </div>
+
             <button onClick={onClose} className="w-full rounded-lg bg-evergreen py-2.5 text-sm font-semibold text-white hover:bg-evergreen-deep">
               Done
             </button>
+
           </div>
+
+
         ) : (
           <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6">
             <FormSection title="Student information">

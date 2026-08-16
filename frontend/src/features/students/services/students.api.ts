@@ -28,7 +28,7 @@ export type CreateStudentPayload = {
 };
 
 export async function createStudentRequest(payload: CreateStudentPayload) {
-  const { data } = await apiClient.post<{ student: StudentListItem; generatedEmail: string; setupOtp: string }>(
+  const { data } = await apiClient.post<{ student: StudentListItem; generatedEmail: string; setupOtp: string, parentSetupOtp:string,parentAlreadyExisted:boolean }>(
     "/api/students",
     payload
   );
