@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { AuthLayout } from "@/components/layouts/auth-layout";
 import { AuthField } from "@/features/auth/components/auth-field";
 import { apiClient } from "@/lib/api";
+import { setAuth } from "#/lib/auth-store";
 
 export const Route = createFileRoute("/setup-account")({
   component: SetupAccountPage,
@@ -23,6 +24,24 @@ function SetupAccountPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
+  
+useEffect(() => {
+    apiClient
+      .post("/api/auth/refresh")
+      .then(({ data }) => {
+        setAuth({ token: data.token, role: data.role });
+        navigate({ to: "/dashboard" });
+      })
+      .catch(() => {
+        // No valid session — that's fine, just show the login form
+        setCheckingSession(false);
+      });
+  }, [navigate]);
+
+  if (checkingSession) {
+    return null; // or a small spinner if a blank flash bothers you
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
