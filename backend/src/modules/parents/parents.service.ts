@@ -1,6 +1,6 @@
 import prisma  from "@/config/prisma";
 import { generateOtp } from "@/utils/otp.util";
-import { findParentByEmail, createParentWithUser, linkParentToStudent } from "./parents.repository";
+import { findParentByEmail, createParentWithUser, linkParentToStudent, findParentByUserId } from "./parents.repository";
 
 export async function inviteParent(studentId: string, overrides: { fullName?: string; email?: string; phone?: string }) {
   const student = await prisma.student.findUnique({ where: { id: studentId } });
@@ -24,4 +24,10 @@ export async function inviteParent(studentId: string, overrides: { fullName?: st
   const { otp, expiresAt } = generateOtp();
   const { parent } = await createParentWithUser({ fullName, email, phone, studentId, otp, otpExpiresAt: expiresAt });
   return { parent, alreadyExisted: false, otp };
+}
+
+export async function getMyChildren(userId: string) {
+  const parent = await findParentByUserId(userId);
+  if (!parent) throw new Error("Parent profile not found");
+  return parent.students;
 }
