@@ -21,6 +21,7 @@ export type StudentListItem = {
   createdAt: string;
   user: { id: string; email: string };
   class: { id: string; className: string } | null;
+  parents: { id: string; user: { id: string; fullName: string; email: string } }[];
 
 
 };

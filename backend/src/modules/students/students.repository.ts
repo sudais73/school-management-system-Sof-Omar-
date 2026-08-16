@@ -82,6 +82,7 @@ export function findAllStudents(search?: string) {
     include: {
       user: { select: { id: true, email: true } },
       class: { select: { id: true, className: true } },
+      parents: { include: { user: { select: { id: true, fullName: true, email: true } } } },
     },
     orderBy: { createdAt: "desc" },
   });

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Search, UserPlus, Eye } from "lucide-react";
+import { Search, UserPlus, Eye, KeyRound } from "lucide-react";
 import { fetchStudents } from "@/features/students/services/students.api";
 import { fetchClasses } from "@/features/classes/services/classes.api";
 import { AddStudentModal } from "@/features/students/components/AddStudentModal";
@@ -9,6 +9,7 @@ import { ViewStudentModal } from "@/features/students/components/ViewStudentModa
 import { ActionsMenu } from "@/components/ui/actions-menu";
 import type { StudentListItem } from "@/types/student";
 import type { SchoolClass } from "@/types/class";
+import { apiClient } from "#/lib/api";
 
 export const Route = createFileRoute("/dashboard/students")({
   component: StudentsPage,
@@ -21,11 +22,39 @@ function StudentsPage() {
   const [loading, setLoading] = useState(true);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [viewingStudent, setViewingStudent] = useState<StudentListItem | null>(null);
+  const [otpResult, setOtpResult] = useState<{ otp: string; name: string } | null>(null);
 
   function loadStudents() {
     return fetchStudents().then(setStudents);
   }
 
+async function handleResendOtp(userId: string, name: string) {
+  try {
+    const { data } = await apiClient.post(`/api/auth/regenerate-otp/${userId}`);
+    setOtpResult({ otp: data.setupOtp, name });
+  } catch (err: any) {
+    alert(err.response?.data?.message ?? "Failed to regenerate code");
+  }
+}
+function buildResendItems(s: StudentListItem) {
+  const items = [
+    {
+      label: `Resend ${s.firstName}'s code`,
+      icon: <KeyRound size={14} />,
+      onClick: () => handleResendOtp(s.user.id, `${s.firstName} ${s.lastName}`),
+    },
+  ];
+
+  s.parents.forEach((p) => {
+    items.push({
+      label: `Resend ${p.user.fullName}'s code (parent)`,
+      icon: <KeyRound size={14} />,
+      onClick: () => handleResendOtp(p.user.id, p.user.fullName),
+    });
+  });
+
+  return items;
+}
   useEffect(() => {
     Promise.all([loadStudents(), fetchClasses().then(setClasses)]).finally(() => setLoading(false));
   }, []);
@@ -124,7 +153,7 @@ function StudentsPage() {
                         <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyle[s.status]}`}>{s.status}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <ActionsMenu items={[{ label: "View profile", icon: <Eye size={14} />, onClick: () => setViewingStudent(s) }]} />
+                        <ActionsMenu items={[{ label: "View profile", icon: <Eye size={14} />, onClick: () => setViewingStudent(s) }, ...buildResendItems(s)]} />
                       </td>
                     </tr>
                   ))}
