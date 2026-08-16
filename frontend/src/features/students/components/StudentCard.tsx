@@ -1,4 +1,4 @@
-import { Eye, School } from "lucide-react";
+import { Eye, KeyRound, School } from "lucide-react";
 import { ActionsMenu } from "@/components/ui/actions-menu";
 import type { StudentListItem } from "@/types/student";
 
@@ -8,11 +8,16 @@ const statusStyle: Record<string, string> = {
   SUSPENDED: "bg-red-100 text-red-700",
   INACTIVE: "bg-gray-100 text-gray-600",
 };
+type StudentCardProps = {
+  student: StudentListItem;
+  onView: () => void;
+  onResend: () => void;
+};
 
-export function StudentCard({ student, onView }: { student: StudentListItem; onView: () => void }) {
+export function StudentCard({ student, onView, onResend }: StudentCardProps) {
   return (
     <div className="rounded-2xl border border-ulead-line bg-chalk-card p-4">
-      <div className="mb-3 flex items-center justify-between">
+        <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-marigold/15 text-sm font-semibold text-marigold-deep">
             {student.firstName.charAt(0)}
@@ -22,7 +27,12 @@ export function StudentCard({ student, onView }: { student: StudentListItem; onV
             <p className="font-mono text-xs text-ulead-slate">{student.admissionNumber}</p>
           </div>
         </div>
-        <ActionsMenu items={[{ label: "View profile", icon: <Eye size={14} />, onClick: onView }]} />
+        <ActionsMenu
+          items={[
+            { label: "View profile", icon: <Eye size={14} />, onClick: onView },
+            { label: "Resend setup code", icon: <KeyRound size={14} />, onClick: onResend },
+          ]}
+        />
       </div>
       <div className="flex items-center justify-between border-t border-ulead-line pt-3 text-sm text-ulead-slate">
         <p className="flex items-center gap-2"><School size={13} /> {student.class?.className ?? "No class"}</p>

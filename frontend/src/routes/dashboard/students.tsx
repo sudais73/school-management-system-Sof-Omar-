@@ -10,6 +10,7 @@ import { ActionsMenu } from "@/components/ui/actions-menu";
 import type { StudentListItem } from "@/types/student";
 import type { SchoolClass } from "@/types/class";
 import { apiClient } from "#/lib/api";
+import { ResendOtpModal } from "#/features/students/components/ResendOtpModal";
 
 export const Route = createFileRoute("/dashboard/students")({
   component: StudentsPage,
@@ -23,38 +24,38 @@ function StudentsPage() {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [viewingStudent, setViewingStudent] = useState<StudentListItem | null>(null);
   const [otpResult, setOtpResult] = useState<{ otp: string; name: string } | null>(null);
-
+  const [resendingStudent, setResendingStudent] = useState<StudentListItem | null>(null);
   function loadStudents() {
     return fetchStudents().then(setStudents);
   }
 
-async function handleResendOtp(userId: string, name: string) {
-  try {
-    const { data } = await apiClient.post(`/api/auth/regenerate-otp/${userId}`);
-    setOtpResult({ otp: data.setupOtp, name });
-  } catch (err: any) {
-    alert(err.response?.data?.message ?? "Failed to regenerate code");
+  async function handleResendOtp(userId: string, name: string) {
+    try {
+      const { data } = await apiClient.post(`/api/auth/regenerate-otp/${userId}`);
+      setOtpResult({ otp: data.setupOtp, name });
+    } catch (err: any) {
+      alert(err.response?.data?.message ?? "Failed to regenerate code");
+    }
   }
-}
-function buildResendItems(s: StudentListItem) {
-  const items = [
-    {
-      label: `Resend ${s.firstName}'s code`,
-      icon: <KeyRound size={14} />,
-      onClick: () => handleResendOtp(s.user.id, `${s.firstName} ${s.lastName}`),
-    },
-  ];
+  function buildResendItems(s: StudentListItem) {
+    const items = [
+      {
+        label: `Resend ${s.firstName}'s code`,
+        icon: <KeyRound size={14} />,
+        onClick: () => handleResendOtp(s.user.id, `${s.firstName} ${s.lastName}`),
+      },
+    ];
 
-  s.parents.forEach((p) => {
-    items.push({
-      label: `Resend ${p.user.fullName}'s code (parent)`,
-      icon: <KeyRound size={14} />,
-      onClick: () => handleResendOtp(p.user.id, p.user.fullName),
+    s.parents.forEach((p) => {
+      items.push({
+        label: `Resend ${p.user.fullName}'s code (parent)`,
+        icon: <KeyRound size={14} />,
+        onClick: () => handleResendOtp(p.user.id, p.user.fullName),
+      });
     });
-  });
 
-  return items;
-}
+    return items;
+  }
   useEffect(() => {
     Promise.all([loadStudents(), fetchClasses().then(setClasses)]).finally(() => setLoading(false));
   }, []);
@@ -121,7 +122,7 @@ function buildResendItems(s: StudentListItem) {
           {/* Mobile */}
           <div className="grid grid-cols-1 gap-3 md:hidden">
             {filtered.map((s) => (
-              <StudentCard key={s.id} student={s} onView={() => setViewingStudent(s)} />
+              <StudentCard key={s.id} student={s} onView={() => setViewingStudent(s)} onResend={() => setResendingStudent(s)} />
             ))}
           </div>
 
@@ -153,7 +154,10 @@ function buildResendItems(s: StudentListItem) {
                         <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyle[s.status]}`}>{s.status}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <ActionsMenu items={[{ label: "View profile", icon: <Eye size={14} />, onClick: () => setViewingStudent(s) }, ...buildResendItems(s)]} />
+                        <ActionsMenu items={[
+                          { label: "View profile", icon: <Eye size={14} />, onClick: () => setViewingStudent(s) },
+                          { label: "Resend setup code", icon: <KeyRound size={14} />, onClick: () => setResendingStudent(s) },
+                        ]} />
                       </td>
                     </tr>
                   ))}
@@ -166,6 +170,7 @@ function buildResendItems(s: StudentListItem) {
 
       {isAddOpen && <AddStudentModal open={isAddOpen} classes={classes} onClose={() => setIsAddOpen(false)} onSuccess={loadStudents} />}
       {viewingStudent && <ViewStudentModal student={viewingStudent} onClose={() => setViewingStudent(null)} />}
+        {resendingStudent && <ResendOtpModal student={resendingStudent} onClose={() => setResendingStudent(null)} />}
     </div>
   );
 }
