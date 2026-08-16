@@ -9,7 +9,6 @@ import { ViewStudentModal } from "@/features/students/components/ViewStudentModa
 import { ActionsMenu } from "@/components/ui/actions-menu";
 import type { StudentListItem } from "@/types/student";
 import type { SchoolClass } from "@/types/class";
-import { apiClient } from "#/lib/api";
 import { ResendOtpModal } from "#/features/students/components/ResendOtpModal";
 
 export const Route = createFileRoute("/dashboard/students")({
@@ -23,39 +22,13 @@ function StudentsPage() {
   const [loading, setLoading] = useState(true);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [viewingStudent, setViewingStudent] = useState<StudentListItem | null>(null);
-  const [otpResult, setOtpResult] = useState<{ otp: string; name: string } | null>(null);
   const [resendingStudent, setResendingStudent] = useState<StudentListItem | null>(null);
   function loadStudents() {
     return fetchStudents().then(setStudents);
   }
 
-  async function handleResendOtp(userId: string, name: string) {
-    try {
-      const { data } = await apiClient.post(`/api/auth/regenerate-otp/${userId}`);
-      setOtpResult({ otp: data.setupOtp, name });
-    } catch (err: any) {
-      alert(err.response?.data?.message ?? "Failed to regenerate code");
-    }
-  }
-  function buildResendItems(s: StudentListItem) {
-    const items = [
-      {
-        label: `Resend ${s.firstName}'s code`,
-        icon: <KeyRound size={14} />,
-        onClick: () => handleResendOtp(s.user.id, `${s.firstName} ${s.lastName}`),
-      },
-    ];
-
-    s.parents.forEach((p) => {
-      items.push({
-        label: `Resend ${p.user.fullName}'s code (parent)`,
-        icon: <KeyRound size={14} />,
-        onClick: () => handleResendOtp(p.user.id, p.user.fullName),
-      });
-    });
-
-    return items;
-  }
+ 
+  
   useEffect(() => {
     Promise.all([loadStudents(), fetchClasses().then(setClasses)]).finally(() => setLoading(false));
   }, []);
