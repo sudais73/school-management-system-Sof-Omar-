@@ -54,7 +54,7 @@ useEffect(() => {
 
     setLoading(true);
     apiClient
-      .post("/auth/setup-account", { email, otp, newPassword })
+      .post("/api/auth/setup-account", { email, otp, newPassword })
       .then(() => setDone(true))
       .catch((err) => {
         const message = axios.isAxiosError(err) ? err.response?.data?.message : null;
