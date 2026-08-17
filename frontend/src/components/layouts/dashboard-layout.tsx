@@ -58,7 +58,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
       <Sidebar  open={openSidebar} onChange={()=>setOpenSidebar(!open)} role={role} />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Topbar open={openSidebar} onOpenChange={setOpenSidebar} role={role} />
-        <main className="flex-1 overflow-y-auto p-8">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 md:p-8">{children}</main>
       </div>
     </div>
   );
