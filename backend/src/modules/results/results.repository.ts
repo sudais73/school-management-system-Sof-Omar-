@@ -20,3 +20,6 @@ export function findClassStudents(classId: string) {
 export function findMarksForComponents(componentIds: string[]) {
   return prisma.studentMark.findMany({ where: { gradeComponentId: { in: componentIds } } });
 }
+export function findAttendanceStats(studentId: string) {
+  return prisma.attendanceRecord.findMany({ where: { studentId }, select: { status: true } });
+}

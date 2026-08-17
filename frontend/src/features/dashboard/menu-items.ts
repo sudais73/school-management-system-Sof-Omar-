@@ -60,10 +60,11 @@ export const menuItems: MenuItem[] = [
   },
   {
     label: "My Children",
-    href: "/dashboard/my-children",
-    icon: Users,
-    roles: ["PARENT"],
+     href: "/dashboard/parent/results",
+  icon: BarChart3,
+  roles: ["PARENT"],
   },
+
   {
     label: "Result Entry",
     href: "/dashboard/teacher/my-classes",

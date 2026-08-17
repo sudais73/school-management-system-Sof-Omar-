@@ -30,3 +30,7 @@ export function findParentByUserId(userId: string) {
     },
   });
 }
+
+export function isStudentLinkedToParent(userId: string, studentId: string) {
+  return prisma.parent.findFirst({ where: { userId, students: { some: { id: studentId } } } });
+}

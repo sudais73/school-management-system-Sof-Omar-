@@ -1,5 +1,7 @@
 import { findPublishedStructures, findClassStudents, findMarksForComponents } from "./results.repository";
 import { gradeFor, remarkFor } from "@/utils/grade.util";
+import { findAttendanceStats } from "./results.repository";
+import prisma from "@/config/prisma";
 
 export async function getClassResults(classId: string, session: string, term: string) {
   const structures = findPublishedStructures ? await findPublishedStructures(classId, session, term) : [];
@@ -31,9 +33,10 @@ export async function getClassResults(classId: string, session: string, term: st
       }));
 
       const grandMax = components.reduce((sum, c) => sum + c.maxScore, 0);
-      const hasAny = components.some((c) => c.score !== null);
+      const allScored = components.every((c) => c.score !== null);
       const total = components.reduce((sum, c) => sum + (c.score ?? 0), 0);
-      const grade = hasAny ? gradeFor(total, grandMax) : "—";
+
+      const grade = allScored ? gradeFor(total, grandMax) : "—";
 
       return {
         subjectName: structure.subject.name,
@@ -41,7 +44,7 @@ export async function getClassResults(classId: string, session: string, term: st
         total,
         grandMax,
         grade,
-        remark: hasAny ? remarkFor(grade) : "Not yet scored",
+        remark: allScored ? remarkFor(grade) : "Not yet scored",
       };
     });
 
@@ -64,4 +67,40 @@ export async function getClassResults(classId: string, session: string, term: st
   });
 
   return { className: "", session, term, students: results };
+}
+
+
+export async function getStudentResult(studentId: string, session: string, term: string) {
+  const student = await prisma.student.findUnique({ where: { id: studentId }, include: { class: true } });
+  if (!student || !student.classId) throw new Error("Student not found or not assigned to a class");
+
+  const classResults = await getClassResults(student.classId, session, term);
+  if (!classResults) return null;
+
+  const me = classResults.students.find((s) => s.id === studentId);
+  if (!me) return null;
+
+  // Rank: sort everyone who's actually been scored by their average, descending
+  const scored = classResults.students.filter((s) => s.summary.totalSubjects > 0);
+  scored.sort((a, b) => b.summary.avgScore - a.summary.avgScore);
+  const rank = scored.findIndex((s) => s.id === studentId) + 1;
+
+  const attendanceRecords = await findAttendanceStats(studentId);
+  const presentCount = attendanceRecords.filter((r) => r.status === "PRESENT").length;
+  const attendancePercentage = attendanceRecords.length ? Math.round((presentCount / attendanceRecords.length) * 100) : 0;
+
+  return {
+    student: { id: student.id, firstName: student.firstName, middleName: student.middleName, lastName: student.lastName, admissionNumber: student.admissionNumber, gender: student.gender, class: { id: student.class!.id, className: student.class!.className } },
+    session,
+    term,
+    subjects: me.subjects,
+    summary: {
+      avgScore: me.summary.avgScore,
+      totalSubjects: me.summary.totalSubjects,
+      overallGrade: me.summary.overallGrade,
+      rank: rank || null,
+      outOf: scored.length,
+      attendancePercentage,
+    },
+  };
 }
