@@ -56,3 +56,9 @@ export async function saveMarks(gradeComponentId: string, marks: { studentId: st
 export function publishComponent(id: string) {
   return prisma.gradeComponent.update({ where: { id }, data: { status: "PUBLISHED", publishedAt: new Date() } });
 }
+
+export async function getTeacherSummaryData(teacherId: string) {
+  const classes = await findTeacherClasses(teacherId);
+  const owned = await prisma.class.findFirst({ where: { homeroomTeacherId: teacherId }, include: { students: true } });
+  return { classes, homeroomClass: owned };
+}

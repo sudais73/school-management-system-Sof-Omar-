@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { requireAuth } from "@/middleware/auth.middleware";
 import { requireRole } from "@/middleware/require-role.middleware";
-import { myClassesHandler, getStructureHandler, createStructureHandler, listMarksHandler, saveMarksHandler } from "./grades.controller";
+import { myClassesHandler, getStructureHandler, createStructureHandler, listMarksHandler, saveMarksHandler, teacherSummaryHandler } from "./grades.controller";
 
 const router = Router();
 
@@ -12,5 +12,6 @@ router.get("/grade-structure", getStructureHandler);
 router.post("/grade-structure", createStructureHandler);
 router.get("/marks", listMarksHandler);
 router.post("/marks", saveMarksHandler);
+router.get("/summary", teacherSummaryHandler);
 
 export default router;

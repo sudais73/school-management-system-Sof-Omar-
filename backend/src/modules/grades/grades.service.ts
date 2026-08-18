@@ -33,3 +33,26 @@ export async function saveComponentMarks(gradeComponentId: string, marks: { stud
 
   return component;
 }
+
+export async function getTeacherSummary(teacherId: string) {
+  const { classes, homeroomClass } = await repo.getTeacherSummaryData(teacherId);
+
+  const uniqueStudentIds = new Set(classes.flatMap((c) => c.students.map((s) => s.id)));
+  const totalSubjects = classes.reduce((sum, c) => sum + c.subjects.length, 0);
+
+  let homeroomAttendanceSubmittedToday = null;
+  if (homeroomClass) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const session = await prisma.attendance.findUnique({ where: { classId_date: { classId: homeroomClass.id, date: today } } });
+    homeroomAttendanceSubmittedToday = !!session;
+  }
+
+  return {
+    totalClasses: classes.length,
+    totalStudents: uniqueStudentIds.size,
+    totalSubjects,
+    homeroomClass: homeroomClass ? { id: homeroomClass.id, className: homeroomClass.className, studentCount: homeroomClass.students.length } : null,
+    homeroomAttendanceSubmittedToday,
+  };
+}

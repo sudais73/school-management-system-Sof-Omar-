@@ -47,3 +47,9 @@ export async function saveMarksHandler(req: Request, res: Response) {
     res.status(400).json({ message: err.message });
   }
 }
+export async function teacherSummaryHandler(req: Request, res: Response) {
+  const teacher = await prisma.teacher.findUnique({ where: { userId: req.user!.userId } });
+  if (!teacher) return res.status(404).json({ message: "Teacher profile not found" });
+  const summary = await service.getTeacherSummary(teacher.id);
+  res.status(200).json({ summary });
+}
