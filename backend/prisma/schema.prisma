@@ -37,6 +37,7 @@ model User {
   teacher Teacher?
     paymentsRecorded Payment[] @relation("PaymentRecordedBy")
   paymentsEdited   Payment[] @relation("PaymentEditedBy")
+  announcements Announcement[]
   parent                Parent?
   createdConversations  Conversation[]            @relation("CreatedConversations")
   conversationsJoined   ConversationParticipant[]
@@ -57,6 +58,7 @@ model Class {
   subjects Subject[]
   attendances Attendance[] 
    gradeStructures GradeStructure[]
+   announcements Announcement[]
   homeroomTeacherId String?  @unique
   homeroomTeacher   Teacher? @relation("ClassHomeroomTeacher", fields: [homeroomTeacherId], references: [id])
   feeStructures FeeStructure[]
@@ -428,4 +430,41 @@ model Message {
   @@index([conversationId])
   @@index([senderId])
   @@map("messages")
+}
+
+
+enum AnnouncementCategory {
+  GENERAL
+  ACADEMIC
+  EVENT
+  FEE
+  EMERGENCY
+}
+
+enum AnnouncementAudience {
+  ALL
+  STUDENTS
+  PARENTS
+  TEACHERS
+}
+
+model Announcement {
+  id       String               @id @default(cuid())
+  title    String
+  body     String
+  category AnnouncementCategory @default(GENERAL)
+  audience AnnouncementAudience @default(ALL)
+  classId  String?              // only meaningful when audience is STUDENTS or PARENTS — narrows to one class
+  pinned   Boolean              @default(false)
+  authorId String
+
+  class  Class? @relation(fields: [classId], references: [id])
+  author User   @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([classId])
+  @@map("announcements")
 }
