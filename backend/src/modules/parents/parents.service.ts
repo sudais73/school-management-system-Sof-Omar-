@@ -1,7 +1,8 @@
 import prisma  from "@/config/prisma";
 import { generateOtp } from "@/utils/otp.util";
-import { findParentByEmail, createParentWithUser, linkParentToStudent, findParentByUserId } from "./parents.repository";
-
+import { findParentByEmail, createParentWithUser, linkParentToStudent, findParentByUserId, findParentChildrenWithClass } from "./parents.repository";
+import { getStudentResult } from "@/modules/results/results.service";
+import { SESSIONS, TERMS } from "@/config/academic.constants";
 export async function inviteParent(studentId: string, overrides: { fullName?: string; email?: string; phone?: string }) {
   const student = await prisma.student.findUnique({ where: { id: studentId } });
   if (!student) throw new Error("Student not found");
@@ -30,4 +31,32 @@ export async function getMyChildren(userId: string) {
   const parent = await findParentByUserId(userId);
   if (!parent) throw new Error("Parent profile not found");
   return parent.students;
+}
+
+export async function getParentSummary(userId: string) {
+  const parent = await findParentChildrenWithClass(userId);
+  if (!parent) throw new Error("Parent profile not found");
+
+  const children = await Promise.all(
+    parent.students.map(async (student) => {
+      const records = await prisma.attendanceRecord.findMany({ where: { studentId: student.id }, select: { status: true } });
+      const present = records.filter((r) => r.status === "PRESENT").length;
+      const attendancePercentage = records.length ? Math.round((present / records.length) * 100) : null;
+
+      const result = await getStudentResult(student.id, SESSIONS[0], TERMS[0]).catch(() => null);
+
+      return {
+        id: student.id,
+        firstName: student.firstName,
+        lastName: student.lastName,
+        gender: student.gender,
+        className: student.class?.className ?? null,
+        attendancePercentage,
+        overallGrade: result?.summary.overallGrade ?? null,
+        avgScore: result?.summary.avgScore ?? null,
+      };
+    })
+  );
+
+  return { children };
 }
