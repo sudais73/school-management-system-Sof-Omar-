@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { getMyChildren, inviteParent } from "./parents.service";
+import { getMyChildren, getParentSummary, inviteParent } from "./parents.service";
 import { getStudentResult } from "../results/results.service";
 import { isStudentLinkedToParent } from "./parents.repository";
 
@@ -34,4 +34,13 @@ export async function getMyChildResultHandler(req: Request, res: Response) {
   if (!result) return res.status(404).json({ message: "No results released for this term yet" });
 
   res.status(200).json({ result });
+}
+
+export async function parentSummaryHandler(req: Request, res: Response) {
+  try {
+    const summary = await getParentSummary(req.user!.userId);
+    res.status(200).json({ summary });
+  } catch (err: any) {
+    res.status(404).json({ message: err.message });
+  }
 }

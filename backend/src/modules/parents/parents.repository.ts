@@ -34,3 +34,14 @@ export function findParentByUserId(userId: string) {
 export function isStudentLinkedToParent(userId: string, studentId: string) {
   return prisma.parent.findFirst({ where: { userId, students: { some: { id: studentId } } } });
 }
+
+export function findParentChildrenWithClass(userId: string) {
+  return prisma.parent.findUnique({
+    where: { userId },
+    include: {
+      students: {
+        select: { id: true, firstName: true, lastName: true, gender: true, class: { select: { className: true } } },
+      },
+    },
+  });
+}
