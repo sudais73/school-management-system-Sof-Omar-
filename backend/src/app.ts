@@ -16,6 +16,7 @@ import conversationsRoutes from "./modules/conversations/conversations.routes";
 import resultsRoutes from "./modules/results/results.routes";
 import adminAttendanceRoutes from "./modules/admin-attendance/admin-attendance.routes";
 import dashboardRoutes from './modules/dashboard/dashboard.routes'
+import studentPortalRoutes from './modules/student-portal/student-portal.routes'
 const app = express();
 
 app.use(morgan("dev"));
@@ -41,5 +42,6 @@ app.use("/api/conversations", conversationsRoutes);
 app.use("/api/admin/results", resultsRoutes);
 app.use("/api/admin/attendance", adminAttendanceRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/student", studentPortalRoutes);
 
 export default app;
