@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/api";
+import type { ChildResult } from "@/types/parent-result";
 
 export type AdminSummary = {
   totalStudents: number;
@@ -24,4 +25,15 @@ export type TeacherSummary = {
 export async function fetchTeacherSummary() {
   const { data } = await apiClient.get<{ summary: TeacherSummary }>("/api/teacher/summary");
   return data.summary;
+}
+
+
+export async function fetchMySubjects() {
+  const { data } = await apiClient.get<{ subjects: { id: string; name: string; teacherName: string | null }[] }>("/api/student/subjects");
+  return data.subjects;
+}
+
+export async function fetchMyResult(session: string, term: string) {
+  const { data } = await apiClient.get<{ result: ChildResult }>("/api/student/result", { params: { session, term } });
+  return data.result;
 }
