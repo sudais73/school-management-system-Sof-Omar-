@@ -15,6 +15,7 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SetupAccountRouteImport } from './routes/setup-account'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as DashboardAnnouncementsRouteImport } from './routes/dashboard/announcements'
 import { Route as DashboardClassesRouteImport } from './routes/dashboard/classes'
 import { Route as DashboardFeesRouteImport } from './routes/dashboard/fees'
 import { Route as DashboardMessagesRouteImport } from './routes/dashboard/messages'
@@ -55,6 +56,11 @@ const SetupAccountRoute = SetupAccountRouteImport.update({
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardAnnouncementsRoute = DashboardAnnouncementsRouteImport.update({
+  id: '/announcements',
+  path: '/announcements',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const DashboardClassesRoute = DashboardClassesRouteImport.update({
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/setup-account': typeof SetupAccountRoute
+  '/dashboard/announcements': typeof DashboardAnnouncementsRoute
   '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard/fees': typeof DashboardFeesRoute
   '/dashboard/messages': typeof DashboardMessagesRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/setup-account': typeof SetupAccountRoute
+  '/dashboard/announcements': typeof DashboardAnnouncementsRoute
   '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard/fees': typeof DashboardFeesRoute
   '/dashboard/messages': typeof DashboardMessagesRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/setup-account': typeof SetupAccountRoute
+  '/dashboard/announcements': typeof DashboardAnnouncementsRoute
   '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard/fees': typeof DashboardFeesRoute
   '/dashboard/messages': typeof DashboardMessagesRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/setup-account'
+    | '/dashboard/announcements'
     | '/dashboard/classes'
     | '/dashboard/fees'
     | '/dashboard/messages'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/setup-account'
+    | '/dashboard/announcements'
     | '/dashboard/classes'
     | '/dashboard/fees'
     | '/dashboard/messages'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/setup-account'
+    | '/dashboard/announcements'
     | '/dashboard/classes'
     | '/dashboard/fees'
     | '/dashboard/messages'
@@ -282,6 +294,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/announcements': {
+      id: '/dashboard/announcements'
+      path: '/announcements'
+      fullPath: '/dashboard/announcements'
+      preLoaderRoute: typeof DashboardAnnouncementsRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/classes': {
@@ -365,6 +384,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface DashboardRouteRouteChildren {
+  DashboardAnnouncementsRoute: typeof DashboardAnnouncementsRoute
   DashboardClassesRoute: typeof DashboardClassesRoute
   DashboardFeesRoute: typeof DashboardFeesRoute
   DashboardMessagesRoute: typeof DashboardMessagesRoute
@@ -380,6 +400,7 @@ interface DashboardRouteRouteChildren {
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardAnnouncementsRoute: DashboardAnnouncementsRoute,
   DashboardClassesRoute: DashboardClassesRoute,
   DashboardFeesRoute: DashboardFeesRoute,
   DashboardMessagesRoute: DashboardMessagesRoute,

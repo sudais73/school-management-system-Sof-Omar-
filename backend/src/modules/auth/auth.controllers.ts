@@ -20,8 +20,7 @@ export async function login(req: Request, res: Response) {
   }
 
   res.cookie("refreshToken", result.refreshToken, REFRESH_COOKIE_OPTIONS);
-  res.status(200).json({ token: result.accessToken, role: result.role, mustChangePassword: result.mustChangePassword });
-
+  res.status(200).json({ token: result.accessToken, role: result.role, mustChangePassword: result.mustChangePassword, userId: result.userId, fullName: result.fullName });
 
   return res.status(200).json({
     token: result.accessToken,
@@ -53,7 +52,7 @@ export async function refresh(req: Request, res: Response) {
   }
 
   res.cookie("refreshToken", result.refreshToken, REFRESH_COOKIE_OPTIONS);
-  res.status(200).json({ token: result.accessToken, role: result.role });
+  res.status(200).json({ token: result.accessToken, role: result.role, userId: result.userId, fullName: result.fullName });
 }
 
 export async function logout(req: Request, res: Response) {

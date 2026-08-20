@@ -10,7 +10,7 @@ import { generateOtp } from "@/utils/otp.util";
 const REFRESH_TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 export type LoginResult =
-  | { success: true; accessToken: string; refreshToken: string; mustChangePassword: boolean; role: string }
+  | { success: true; accessToken: string; refreshToken: string; mustChangePassword: boolean; role: string, userId:string, fullName:string }
   | { success: false; message: string; requiresSetup?: boolean };
 
 export async function loginUser(email: string, plainPassword: string): Promise<LoginResult> {
@@ -41,6 +41,10 @@ export async function loginUser(email: string, plainPassword: string): Promise<L
     refreshToken,
     mustChangePassword: user.mustChangePassword,
     role: user.role,
+    userId:user.id,
+    fullName:user.fullName
+
+
   };
 
 
@@ -67,7 +71,7 @@ export async function refreshSession(refreshTokenFromCookie: string) {
 
   const accessToken = signToken({ userId: user.id, role: user.role });
 
-  return { success: true as const, accessToken, refreshToken: newRefreshToken, role: user.role };
+  return { success: true as const, accessToken, refreshToken: newRefreshToken, role: user.role, userId:user.id, fullName:user.fullName };
 }
 
 export async function logoutUser(refreshTokenFromCookie: string | undefined) {

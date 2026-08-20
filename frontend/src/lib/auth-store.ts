@@ -1,4 +1,5 @@
 import type { Role } from "@/features/dashboard/menu-items";
+import { offlineDb } from "./offline-db";
 
 type AuthState = { token: string | null; role: Role | null };
 
@@ -9,9 +10,13 @@ export function getAuthState() {
   return state;
 }
 
-export function setAuth(next: AuthState) {
-  state = next;
+export async function setAuth(next: { token: string; role: string; userId?: string; fullName?: string }) {
+  state = { token: next.token, role: next.role };
   listeners.forEach((l) => l());
+
+  if (next.userId && next.fullName) {
+    await offlineDb.session.put({ id: "current", userId: next.userId, role: next.role, fullName: next.fullName, cachedAt: Date.now() });
+  }
 }
 
 export function clearAuth() {
@@ -23,3 +28,5 @@ export function subscribeAuth(listener: () => void) {
   listeners.add(listener);
   return () => listeners.delete(listener);
 }
+
+

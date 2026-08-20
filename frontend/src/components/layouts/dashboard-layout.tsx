@@ -5,6 +5,8 @@ import { Topbar } from "@/features/dashboard/components/topbar";
 import { getAuthState, setAuth } from "@/lib/auth-store";
 import { apiClient } from "@/lib/api";
 import { menuItems, type Role } from "@/features/dashboard/menu-items";
+import { startSyncTrigger } from "@/lib/sync-trigger";
+import { offlineDb } from "#/lib/offline-db";
 
 function isRouteAllowed(pathname: string, role: Role): boolean {
   // Find the menu item that matches this URL — same matching logic the
@@ -29,6 +31,11 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
   const [checked, setChecked] = useState(!!getAuthState().token);
   const[openSidebar, setOpenSidebar] = useState(false);
 
+// inside DashboardLayout, alongside the existing useEffect:
+useEffect(() => {
+  startSyncTrigger();
+}, []);
+
   useEffect(() => {
     if (getAuthState().token) return;
 
@@ -50,6 +57,34 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
       navigate({ to: "/dashboard" });
     }
   }, [pathname, role, navigate]);
+
+  const MAX_OFFLINE_SESSION_AGE_MS = 3 * 24 * 60 * 60 * 1000; // 3 days
+
+useEffect(() => {
+  if (getAuthState().token) return;
+
+  if (!navigator.onLine) {
+    offlineDb.session.get("current").then((cached) => {
+      const isStale = !cached || Date.now() - cached.cachedAt > MAX_OFFLINE_SESSION_AGE_MS;
+      if (cached && !isStale) {
+        setAuth({ token: "offline", role: cached.role, userId: cached.userId, fullName: cached.fullName });
+        setRole(cached.role);
+      } else {
+        navigate({ to: "/login" });
+      }
+      setChecked(true);
+    });
+    return;
+  }
+
+  apiClient.post("/api/auth/refresh")
+    .then(({ data }) => {
+      setAuth({ token: data.token, role: data.role, userId: data.userId, fullName: data.fullName });
+      setRole(data.role);
+    })
+    .catch(() => navigate({ to: "/login" }))
+    .finally(() => setChecked(true));
+}, [navigate]);
 
   if (!checked || !role) return null;
 
