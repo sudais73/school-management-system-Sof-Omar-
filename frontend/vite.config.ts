@@ -18,7 +18,9 @@ export default defineConfig({
     nitro(),
 
     VitePWA({
+      injectRegister: false,
       registerType: "autoUpdate",
+       outDir: ".output/public",
 
       manifest: {
         id: "/",

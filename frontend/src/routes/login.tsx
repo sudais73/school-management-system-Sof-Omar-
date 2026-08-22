@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { apiClient } from "@/lib/api";
 import { setAuth } from "#/lib/auth-store";
-
+import { saveOfflineSession } from "#/lib/offline/auth/offline-session";
 export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
@@ -17,7 +17,9 @@ function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
-  
+
+
+
 useEffect(() => {
     apiClient
       .post("/api/auth/refresh")
@@ -52,6 +54,22 @@ useEffect(() => {
           navigate({ to: "/dashboard" });
         }
       })
+      .then(async ({ data }) => {
+  setAuth({ token: data.token, role: data.role });
+
+  if (data.mustChangePassword) {
+    navigate({ to: "/setup-account" });
+  } else {
+    await saveOfflineSession({
+      userId: data.userId,
+      role: data.role,
+      fullName: data.fullName,
+      cachedAt: Date.now(),
+    });
+
+    navigate({ to: "/dashboard" });
+  }
+})
       .catch((err) => {
         if (axios.isAxiosError(err) && err.response?.data?.requiresSetup) {
           navigate({ to: "/setup-account", search: { email } });
